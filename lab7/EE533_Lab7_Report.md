@@ -1,14 +1,15 @@
 # EE533_Lab7_Report
 
-## 1. ARM C/C++ cross-complier Installation
+## 1. Find what Instruction We Need to Implement
+### 1.1 ARM C/C++ cross-complier Installation
 
-![Screenshot 2025-02-27 160918](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\Screenshot 2025-02-27 160918.png)
+![Screenshot 2025-02-27 160918](<Pic\Screenshot 2025-02-27 160918.png>)
 
-![Screenshot 2025-02-27 161644](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\Screenshot 2025-02-27 161644.png)
+![Screenshot 2025-02-27 161644](<Pic\Screenshot 2025-02-27 161644.png>)
 
-## 2. Assembly code for Bubble Sort
+### 1.2 Assembly code for Bubble Sort
 
-![Screenshot 2025-02-27 161001](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\Screenshot 2025-02-27 161001.png)
+![Screenshot 2025-02-27 161001](<Pic\Screenshot 2025-02-27 161001.png>)
 
 * sort.c
 
@@ -153,11 +154,32 @@ main:
 
 ```
 
-## 3. Pipelined Processor on NetFPGA
+### 1.3 List of instruction needs to be implemented
 
-### 3.1 Instruction Format
+ - add
+ - sub
+ - ldr
+ - mov
+ - ldmia
+ - stmid
+ - ldm
+ - stm
+ - str
+ - lsl
+ - cmp
+ - push
+ - pop
+ - b
+ - bge
+ - ble
+ - bx
 
-#### 3.1.1 Data Processing Instruction
+
+## 2. Pipelined Processor on NetFPGA
+
+### 2.1 Instruction Format
+
+#### 2.1.1 Data Processing Instruction
 
 * Instruction Format definition
 
@@ -187,7 +209,7 @@ main:
 | CMP  |  1010  |      Compare       |
 | LSL  |  1101  | Logical Left Shift |
 
-#### 3.1.2 LDR/STR Instruction
+#### 2.1.2 LDR/STR Instruction
 
 * Instruction Format definition
 
@@ -243,7 +265,7 @@ main:
   * 1110, 0101, 0000, 1011, 0011, 0000, 0000, 1100
   * STR R3, [FP, #-12]
 
-#### 3.1.3 LDM/STM Instruction
+#### 2.1.3 LDM/STM Instruction
 
 * Instruction Format definition
 
@@ -256,7 +278,7 @@ main:
 * STM:
   * 1110, 1000, 1000, 1100, 0000, 0000, 0000, 0011
 
-### 3.2 Generated binary code
+### 2.2 Generated binary code
 
 * I_MEM.mif
 
