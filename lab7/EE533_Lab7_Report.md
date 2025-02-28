@@ -184,6 +184,9 @@ main:
 |      SP       | R13                      | Stack Pointer         |
 |      LR       | R14                      | Link Register         |
 
+- Reference to the Special Registers Definition: https://azeria-labs.com/arm-data-types-and-registers-part-2/
+
+
 ## 2. Pipelined Processor on NetFPGA
 
 ### 2.1 Instruction Format
