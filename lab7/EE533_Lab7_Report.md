@@ -1,15 +1,13 @@
 # EE533_Lab7_Report
 
 ## 1. Find what Instruction We Need to Implement
-### 1.1 ARM C/C++ cross-complier Installation
+### 1.1 ARM C/C++ Cross-complier Installation
 
 ![Screenshot 2025-02-27 160918](<Pic\Screenshot 2025-02-27 160918.png>)
 
 ![Screenshot 2025-02-27 161644](<Pic\Screenshot 2025-02-27 161644.png>)
 
-### 1.2 Assembly code for Bubble Sort
-
-![Screenshot 2025-02-27 161001](<Pic\Screenshot 2025-02-27 161001.png>)
+### 1.2 Assembly Code for Bubble Sort
 
 * sort.c
 
@@ -154,7 +152,7 @@ main:
 
 ```
 
-### 1.3 List of instruction needs to be implemented
+### 1.3 List of Instruction Extracted from Bubble Sort.s that Needs to be Implemented
 
  <!-- - add
  - sub
