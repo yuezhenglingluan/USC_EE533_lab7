@@ -156,7 +156,7 @@ main:
 
 ### 1.3 List of instruction needs to be implemented
 
- - add
+ <!-- - add
  - sub
  - ldr
  - mov
@@ -172,7 +172,27 @@ main:
  - b
  - bge
  - ble
- - bx
+ - bx -->
+
+ | instruction | Explaniation                              | Reference                                                                                                                                                   |
+ | :---------: | :---------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------: |
+ |     add     | Add                                       | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/add--adc--sub--sbc--and-rsb            |
+ |     sub     | Subtract                                  | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/add--adc--sub--sbc--and-rsb            |
+ |     mov     | Move                                      | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/mov-and-mvn                            |
+ |     ldm     | Load Multiple registers, increment after  | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm                                      |
+ |    ldmia    | LDMIA is a synonym for LDM                | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm                                      |
+ |     stm     | Store Multiple registers, increment after | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm                                      |
+ |    stmia    | STMIA is a synonym for STM                | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm                                      |
+ |     ldr     | Load Register with word                   | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldr-and-str--register-offset                     |
+ |     str     | Store Register word                       | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldr-and-str--register-offset                     |
+ |     lsl     | Logical Shift Left                        | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/asr--lsl--lsr--ror--and-rrx?lang=en    |
+ |     cmp     | Compare                                   | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/cmp-and-cmn                            |
+ |     push    | Push registers onto stack                 |https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/push-and-pop                                      |
+ |     pop     | Pop registers from stack                  | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/push-and-pop                                     |
+ |      b      | Branch                                    | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx                          |
+ |     bge     | Branch if greater than or equal           | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
+ |     ble     | Branch if less or equal                   | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
+ |     bx      | Indirect branch                           | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx                          |
 
 
 ## 2. Pipelined Processor on NetFPGA
