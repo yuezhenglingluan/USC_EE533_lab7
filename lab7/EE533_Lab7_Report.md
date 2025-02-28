@@ -9,6 +9,8 @@
 
 ### 1.2 Assembly Code for Bubble Sort
 
+![Screenshot 2025-02-27 161001](<Pic\Screenshot 2025-02-27 161001.png>)
+
 * sort.c
 
 ```c
@@ -152,28 +154,59 @@ main:
 
 ```
 
-### 1.3 Summary
-#### 1.3.1 List of Instruction Extracted from Bubble Sort.s that Needs to be Implemented
+ - Included Instructions' Description and Reference
 
-| instruction | Explaniation                              | Reference                                                                                                                                                   |
-| :---------: | :---------------------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|     add     | Add                                       | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/add--adc--sub--sbc--and-rsb            |
-|     sub     | Subtract                                  | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/add--adc--sub--sbc--and-rsb            |
-|     mov     | Move                                      | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/mov-and-mvn                            |
-|     ldm     | Load Multiple registers, increment after  | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm                                      |
-|    ldmia    | LDMIA is a synonym for LDM                | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm                                      |
-|     stm     | Store Multiple registers, increment after | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm                                      |
-|    stmia    | STMIA is a synonym for STM                | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm                                      |
-|     ldr     | Load Register with word                   | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldr-and-str--register-offset                     |
-|     str     | Store Register word                       | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldr-and-str--register-offset                     |
-|     lsl     | Logical Shift Left                        | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/asr--lsl--lsr--ror--and-rrx?lang=en    |
-|     cmp     | Compare                                   | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/cmp-and-cmn                            |
-|     push    | Push registers onto stack                 |https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/push-and-pop                                      |
-|     pop     | Pop registers from stack                  | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/push-and-pop                                     |
-|      b      | Branch                                    | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx                          |
-|     bge     | Branch if greater than or equal           | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
-|     ble     | Branch if less or equal                   | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
-|     bx      | Indirect branch                           | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx                          |
+| Instruction |               Explaniation                |                          Reference                           |
+| :---------: | :---------------------------------------: | :----------------------------------------------------------: |
+|     add     |                    Add                    | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/add--adc--sub--sbc--and-rsb |
+|     sub     |                 Subtract                  | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/add--adc--sub--sbc--and-rsb |
+|     mov     |                   Move                    | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/mov-and-mvn |
+|     ldm     | Load Multiple registers, increment after  | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm |
+|    ldmia    |        LDMIA is a synonym for LDM         | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm |
+|     stm     | Store Multiple registers, increment after | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm |
+|    stmia    |        STMIA is a synonym for STM         | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldm-and-stm |
+|     ldr     |          Load Register with word          | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldr-and-str--register-offset |
+|     str     |            Store Register word            | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldr-and-str--register-offset |
+|     lsl     |            Logical Shift Left             | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/asr--lsl--lsr--ror--and-rrx?lang=en |
+|     cmp     |                  Compare                  | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/general-data-processing-instructions/cmp-and-cmn |
+|    push     |         Push registers onto stack         | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/push-and-pop |
+|     pop     |         Pop registers from stack          | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/push-and-pop |
+|      b      |                  Branch                   | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx |
+|     bge     |      Branch if greater than or equal      | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
+|     ble     |          Branch if less or equal          | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
+|     bx      |              Indirect branch              | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx |
+
+### 1.3 List of instruction needs to be implemented
+
+#### 1.3.1 Instruction Format Definition
+
+* Instruction Format definition
+
+|   OP_CODE    |      Rs      |      Rt      |      Rd      |    Shift    |   Funct    |
+| :----------: | :----------: | :----------: | :----------: | :---------: | :--------: |
+| I_MEM[31:26] | I_MEM[25:21] | I_MEM[20:16] | I_MEM[15:11] | I_MEM[10:6] | I_MEM[5:0] |
+
+* OP_Code look up table
+
+| Instruction | OP_Code |                Description                |
+| :---------: | :-----: | :---------------------------------------: |
+|     add     | 000000  |                    Add                    |
+|     sub     | 000001  |                 Subtract                  |
+|     mov     | 000010  |                   Move                    |
+|     ldr     | 000011  |          Load Register with word          |
+|     str     | 000100  |            Store Register word            |
+|     ldm     | 000101  | Load Multiple registers, increment after  |
+|     stm     | 000110  | Store Multiple registers, increment after |
+|    ldmia    | 000111  |        LDMIA is a synonym for LDM         |
+|    stmia    | 001000  |        STMIA is a synonym for STM         |
+|     lsl     | 001001  |            Logical Shift Left             |
+|     cmp     | 001010  |                  Compare                  |
+|    push     | 001011  |         Push registers onto stack         |
+|     pop     | 001100  |         Pop registers from stack          |
+|      b      | 001101  |                  Branch                   |
+|     bge     | 001110  |      Branch if greater than or equal      |
+|     ble     | 001111  |          Branch if less or equal          |
+|     bx      | 010000  |             Indirect branchs              |
 
 #### 1.3.2 Special Registers in ARM ISA
 
@@ -183,8 +216,6 @@ main:
 |      IP       | R12                      | Intra Procedural Call |
 |      SP       | R13                      | Stack Pointer         |
 |      LR       | R14                      | Link Register         |
-
-- Reference to the Special Registers Definition: https://azeria-labs.com/arm-data-types-and-registers-part-2/
 
 
 ## 2. Pipelined Processor on NetFPGA
