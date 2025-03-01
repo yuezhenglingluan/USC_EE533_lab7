@@ -154,7 +154,9 @@ main:
 
 ```
 
- - Included Instructions' Description and Reference
+### 1.3 List of instruction needs to be implemented
+
+#### 1.3.1 Extraction of types of Instructions contained in the Bubble Sort Assembly Code
 
 | Instruction |               Explaniation                |                          Reference                           |
 | :---------: | :---------------------------------------: | :----------------------------------------------------------: |
@@ -176,9 +178,8 @@ main:
 |     ble     |          Branch if less or equal          | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
 |     bx      |              Indirect branch              | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx |
 
-### 1.3 List of instruction needs to be implemented
 
-#### 1.3.1 Instruction Format Definition
+#### 1.3.2 Instruction Format Definition
 
 * Instruction Format definition
 
@@ -208,7 +209,7 @@ main:
 |     ble     | 001111  |          Branch if less or equal          |
 |     bx      | 010000  |             Indirect branchs              |
 
-#### 1.3.2 Special Registers in ARM ISA
+#### 1.3.3 Special Registers in ARM ISA
 
 | Register Name | Actual Register Location | Description           |
 | :-----------: | :----------------------: | :-------------------: |
