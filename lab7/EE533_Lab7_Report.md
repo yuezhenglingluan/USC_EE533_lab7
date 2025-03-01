@@ -220,7 +220,174 @@ main:
 
 ## 2. Pipelined Processor on NetFPGA
 
-### 2.1 Instruction Format
+### 2.1 Instruction Generated
+
+```
+.data
+array:  .dword  323, 123, -455, 2, 98, 125, 10, 65, -56, 0
+N:      .dword  10
+
+.text
+.global _start
+_start:
+    ldr r4, =array       @ r4 = base address of array
+    ldr r5, =N           @ r5 = address of N
+    ldr r5, [r5]         @ r5 = N (size of array)
+    sub r5, r5, #1       @ r5 = N-1 (outer loop limit)
+
+outer_loop:
+    mov r6, #0           @ i = 0
+
+inner_loop:
+    sub r7, r6, r5       @ if i >= N-1, exit inner loop
+    bge outer_continue
+
+    @ Load array[i] and array[i+1]
+    mov r8, r6, LSL #2   @ r8 = i * 4 (word offset)
+    add r9, r4, r8       @ r9 = address of array[i]
+    ldr r10, [r9]        @ r10 = array[i]
+    ldr r11, [r9, #4]    @ r11 = array[i+1]
+
+    sub r12, r10, r11    @ r12 = array[i] - array[i+1]
+    ble no_swap          @ If array[i] <= array[i+1], no swap
+
+    str r11, [r9]        @ array[i] = array[i+1]
+    str r10, [r9, #4]    @ array[i+1] = array[i]
+
+no_swap:
+    add r6, r6, #1       @ i++
+    b inner_loop
+
+outer_continue:
+    sub r5, r5, #1       @ Reduce loop limit (N-1, N-2, ...)
+    bgt outer_loop       @ If still positive, loop again
+
+end:
+    b end                @ Infinite loop (halt)
+```
+
+* Assembly Code
+
+```
+#0  ldr r4, =array
+#1  ldr r5, =N
+#2  ldr r5, [r5]
+#3  sub r5, r5, #1       @ outer_continue
+#4  mov r6, #0           @ outer_loop
+#5  mov r8, r6
+#6  lsl r8, r8, #2
+#7  add r9, r4, r8
+#8  ldr r10, [r9]
+#9  ldr r11, [r9, #8]
+#10 sub r12, r10, r11
+#11 ble no_swap
+#12 str r11, [r9]
+#13 str r10, [r9, #8]
+#14 add r6, r6, #1        @ no_swap
+#15 sub r7, r6, r5        @ inner_loop
+#16 bge outer_continue
+#17 b inner_loop
+#18 b end                 @ end
+```
+
+### 2.2 Instruction Format
+
+#### 2.2.1 Data Processing Type
+
+| Instr# |       Instr       | OP Code [31:26] | Immediate/Offset [25:24] | rs [23:20] | rt [19:16] | rd [15:12] | Offset [11:0] |
+| :----: | :---------------: | :-------------: | :----------------------: | :--------: | :--------: | :--------: | :-----------: |
+|   3    |  sub r5, r5, #1   |     000001      |            10            |    0101    |    0101    |    0001    |               |
+|   6    |  lsl r8, r8, #2   |     000011      |            10            |    1000    |    1000    |    0010    |               |
+|   7    |  add r9, r4, r8   |     000000      |            00            |    1001    |    0100    |    1000    |               |
+|   10   | sub r12, r10, r11 |     000001      |            00            |    1100    |    1010    |    1011    |               |
+|   14   |  add r6, r6, #1   |     000000      |            10            |    0110    |    0110    |    0001    |               |
+|   15   |  sub r7, r6, r5   |     000001      |            00            |    0111    |    0110    |    0101    |               |
+
+
+
+#### 2.2.2 Move Type
+
+| Instr# |       Instr       | OP Code [31:26] | Immediate/Offset [25:24] | Des Reg [23:20] | Sr Reg1 [19:16] | Sr Reg2 [15:12] | Offset [11:0] |
+| :----: | :---------------: | :-------------: | :----------------------: | :-------------: | :-------------: | :-------------: | :-----------: |
+|   4    |    mov r6, #0     |     000010      |            10            |      0110       |                 |                 |               |
+|   5    |    mov r8, r6     |     000010      |            00            |      1000       |      0110       |                 |               |
+
+#### 2.2.3 Load/Store Type
+
+| Instr# | Instr | OP Code [31:26] | Des Reg [25:21] | Sr Reg1[20:16] | Sr Reg2[15:0] | Offset[10:0] |
+| :----: | :---: | :-------------: | :-------------: | :------------: | :-----------: | :----------: |
+|        |  ldr  |     000100      |                 |                |               |              |
+|        |  str  |     000101      |                 |                |               |              |
+
+#### 2.2.3 Branch Type
+
+
+
+
+* OP Code Definition
+
+| Instr Label | OP Code |
+| :---------: | :-----: |
+|     add     | 000000  |
+|     sub     | 000001  |
+|     mov     | 000010  |
+|     lsl     | 000011  |
+|     ldr     | 000100  |
+|     str     | 000101  |
+|      b      | 000110  |
+|     bge     | 000111  |
+|     ble     | 001000  |
+
+
+
+
+* Instruction Table
+
+| Instr# | Instr | OP Code | Des Reg | Sr Reg1 | Sr Reg2 | Offset |
+| :----: | :---: | :-----: | :-----: | :-----: | :-----: | :----: |
+|   0    |  ldr  | 000100  |   r4    | =array  |         |        |
+|   1    |  ldr  | 000100  |   r5    |   =N    |         |        |
+|   2    |  ldr  | 000100  |   r5    |   r5    |         |        |
+|   3    |  sub  | 000001  |   r5    |   r5    |   #1    |        |
+|   4    |  mov  | 000010  |   r6    |         |         |   #0   |
+|   5    |  mov  | 000010  |   r8    |   r6    |         |        |
+|   6    |  lsl  | 000011  |   r8    |   r8    |         |   #2   |
+|   7    |  add  | 000110  |   r9    |   r4    |   r8    |        |
+|   8    |  ldr  | 000100  |   r10   |   r9    |         |        |
+|   9    |  ldr  | 000100  |   r11   |   r9    |         |   #8   |
+|   10   |  sub  | 000001  |   r12   |   r10   |   r11   |        |
+|   11   |  ble  | 001000  |         |         |         |        |
+|   12   |  str  | 000101  |   r11   |   r9    |         |        |
+|   13   |  str  | 000101  |   r10   |   r9    |         |   #8   |
+|   14   |  add  | 000000  |   r6    |   r6    |         |   #1   |
+|   15   |  sub  | 000001  |   r7    |   r6    |   r5    |        |
+|   16   |  bge  | 000111  |         |         |         |        |
+|   17   |   b   | 000110  |         |         |         |        |
+|   18   |   b   | 000110  |         |         |         |        |
+
+
+
+
+
+```
+04 80 10 00  # ldr r4, =array
+05 80 20 00  # ldr r5, =N
+0A 54 00 00  # ldr r5, [r5]
+0B 54 00 01  # sub r5, r5, #1
+04 60 00 00  # mov r6, #0
+05 68 00 03  # mov r8, r6, LSL #3
+06 94 00 00  # add r9, r4, r8
+0A A9 00 00  # ldr r10, [r9]
+0A B9 00 08  # ldr r11, [r9, #8]
+0B C5 A9 00  # sub r12, r10, r11
+08 C0 00 20  # ble no_swap
+0F B9 00 00  # str r11, [r9]
+0F A9 00 08  # str r10, [r9, #8]
+04 66 00 01  # add r6, r6, #1
+09 00 00 40  # b inner_loop
+```
+
+
 
 #### 2.1.1 Data Processing Instruction
 
