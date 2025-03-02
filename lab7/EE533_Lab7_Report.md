@@ -153,8 +153,9 @@ main:
 	.ident	"GCC: (Arm GNU Toolchain 14.2.Rel1 (Build arm-14.52)) 14.2.1 20241119"
 
 ```
+### 1.3 List of instruction needs to be implemented
 
- - Included Instructions' Description and Reference
+#### 1.3.1 Lists of Instruction from Bubble Sort.s
 
 | Instruction |               Explaniation                |                          Reference                           |
 | :---------: | :---------------------------------------: | :----------------------------------------------------------: |
@@ -176,9 +177,9 @@ main:
 |     ble     |          Branch if less or equal          | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
 |     bx      |              Indirect branch              | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx |
 
-### 1.3 List of instruction needs to be implemented
 
-#### 1.3.1 Instruction Format Definition
+
+#### 1.3.2 Instruction Format Definition
 
 * Instruction Format definition
 
@@ -208,7 +209,7 @@ main:
 |     ble     | 001111  |          Branch if less or equal          |
 |     bx      | 010000  |             Indirect branchs              |
 
-#### 1.3.2 Special Registers in ARM ISA
+#### 1.3.3 Special Registers in ARM ISA
 
 | Register Name | Actual Register Location | Description           |
 | :-----------: | :----------------------: | :-------------------: |
@@ -509,8 +510,7 @@ endmodule
 ```
 
 * Waveform
-
-![屏幕截图 2025-03-01 152033](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152033.png)
+![alt text](<Pic/Screenshot 2025-03-01 152033.png>)
 
 #### 3.1.2 PC+1
 
@@ -603,7 +603,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 152451](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152451.png)
+![屏幕截图 2025-03-01 152451](<Pic\屏幕截图 2025-03-01 152451.png>)
 
 #### 3.1.3 PC_MUX
 
@@ -711,7 +711,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 152852](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152852.png)
+![屏幕截图 2025-03-01 152852](<Pic\屏幕截图 2025-03-01 152852.png>)
 
 #### 3.1.4 I_MEM
 
@@ -920,7 +920,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 155841](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 155841.png)
+![屏幕截图 2025-03-01 155841](<Pic\屏幕截图 2025-03-01 155841.png>)
 
 #### 3.2.2 Control_Unit
 
@@ -1073,7 +1073,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 162105](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 162105.png)
+![屏幕截图 2025-03-01 162105](<Pic\屏幕截图 2025-03-01 162105.png>)
 
 #### 3.2.3 Branch_Detection_Unit
 
@@ -1275,7 +1275,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 184136](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 184136.png)
+![屏幕截图 2025-03-01 184136](<Pic\屏幕截图 2025-03-01 184136.png>)
 
 #### 3.2.4 Offset_Extend
 
@@ -1368,7 +1368,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 164227](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 164227.png)
+![屏幕截图 2025-03-01 164227](<Pic\屏幕截图 2025-03-01 164227.png>)
 
 ### 3.3 EX Stage
 
@@ -1575,7 +1575,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 164641](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 164641.png)
+![屏幕截图 2025-03-01 164641](<Pic\屏幕截图 2025-03-01 164641.png>)
 
 #### 3.3.2 ALU_src_MUX
 
@@ -1703,7 +1703,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 170041](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 170041.png)
+![屏幕截图 2025-03-01 170041](<Pic\屏幕截图 2025-03-01 170041.png>)
 
 ### 3.4 MEM Stage
 
@@ -1825,7 +1825,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 171147](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 171147.png)
+![屏幕截图 2025-03-01 171147](<Pic\屏幕截图 2025-03-01 171147.png>)
 
 ### 3.5 WB Stage
 
@@ -1971,7 +1971,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 174420](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 174420.png)
+![屏幕截图 2025-03-01 174420](<Pic\屏幕截图 2025-03-01 174420.png>)
 
 ### 3.6 Stage Reg
 
@@ -2083,7 +2083,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 185849](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 185849.png)
+![屏幕截图 2025-03-01 185849](<Pic\屏幕截图 2025-03-01 185849.png>)
 
 #### 3.6.2 ID_EX_Reg
 
