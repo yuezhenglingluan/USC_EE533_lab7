@@ -154,7 +154,8 @@ main:
 
 ```
 
- - Included Instructions' Description and Reference
+### 1.3 List of instruction needs to be implemented
+#### 1.3.1 Extraction of types of Instructions contained in the Bubble Sort Assembly Code
 
 | Instruction |               Explaniation                |                          Reference                           |
 | :---------: | :---------------------------------------: | :----------------------------------------------------------: |
@@ -176,9 +177,9 @@ main:
 |     ble     |          Branch if less or equal          | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
 |     bx      |              Indirect branch              | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx |
 
-### 1.3 List of instruction needs to be implemented
 
-#### 1.3.1 Instruction Format Definition
+
+#### 1.3.2 Instruction Format Definition
 
 * Instruction Format definition
 
@@ -208,7 +209,7 @@ main:
 |     ble     | 001111  |          Branch if less or equal          |
 |     bx      | 010000  |             Indirect branchs              |
 
-#### 1.3.2 Special Registers in ARM ISA
+#### 1.3.3 Special Registers in ARM ISA
 
 | Register Name | Actual Register Location | Description           |
 | :-----------: | :----------------------: | :-------------------: |
@@ -289,116 +290,34 @@ end:
 #17 b inner_loop
 #18 b end                 @ end
 ```
-
-### 2.2 MIPS Instruction Format
-
-#### 2.2.1 Pesudo Instruction
-
+* Machine Code
 ```
-lw r0, array_addr
-lw r1, array_size
-subi r1, r1, #1
-mov r2, #0
-outer_loop:
-beq r2, r1, end
-addi r3, r2, #1
-inner_loop:
-bgt r3, r1, next_out
-lw r4, r0(r2)
-lw r5, r0(r3)
-blt r4, r5, no_swap
-sw r4, r0(r3)
-sw r5, r0(r2)
-no_swap:
-addi r3, r3, #1
-j inner_loop
-next_out:
-addi r2, r2, #1
-j outer_loop
-end:
-j end
+00001000000000010000000000001001  
+00000000000000000000000000000000  
+00000000000000000000000000000000  
+00010100001000100000000000011000  
+00000000000000000000000000000000  
+00000100010000110000000000000001  
+00000000000000000000000000000000  
+00000000000000000000000000000000  
+00011000001000110000000000010101  
+00000000000000000000000000000000  
+00001100010001000000000000000000  
+00001100011001010000000000000000  
+00000000000000000000000000000000  
+00000000000000000000000000000000  
+00011100101001000000000000010010  
+00000000000000000000000000000000  
+00010000011001000000000000000000  
+00010000010001010000000000000000  
+00000100011000110000000000000001  
+00100000000000000000000000000110  
+00000000000000000000000000000000  
+00000100010000100000000000000001  
+00100000000000000000000000000001  
+00000000000000000000000000000000  
+00100000000000000000000000011000  
 ```
-
-#### 2.2.2 Real MIPS Instruction
-
-* With manually introduced NOOP, we can avoid data dependency problem and early branch flush problem.
-
-```
-movi r1, #9
-outer_loop:
-noop
-noop
-beq r2, r1, end
-noop
-addi r3, r2, #1
-inner_loop:
-noop
-noop
-bgt r3, r1, next_out
-noop
-lw r4, r2(#0)
-lw r5, r3(#0)
-noop
-noop
-blt r4, r5, no_swap
-noop
-sw r4, r3(#0)
-sw r5, r2(#0)
-no_swap:
-addi r3, r3, #1
-j inner_loop
-noop
-next_out:
-addi r2, r2, #1
-j outer_loop
-noop
-end:
-j end
-```
-
-* Instruction OP Code
-
-| Instr | OP Code [31:26] |
-| :---: | :-------------: |
-| noop  |     000000      |
-| addi  |     000001      |
-| movi  |     000010      |
-|  lw   |     000011      |
-|  sw   |     000100      |
-|  beq  |     000101      |
-|  bgt  |     000110      |
-|  blt  |     000111      |
-|   j   |     001000      |
-
-* Instruction Table
-
-| Addr |   Label    |        Instr         | OP Code [31:26] | Rs [25:21] | Rt [20:16] | Offset [15:0] |
-| :--: | :--------: | :------------------: | :-------------: | :--------: | :--------: | :-----------: |
-|  0   |            |     movi r1, #9      |     000010      |    5'd0    |    5'd1    |     16'd9     |
-|  1   | outer_loop |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  2   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  3   |            |   beq r2, r1, end    |     000101      |    5'd1    |    5'd2    |    16'd24     |
-|  4   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  5   |            |   addi r3, r2, #1    |     000001      |    5'd2    |    5'd3    |     16'd1     |
-|  6   | inner_loop |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  7   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  8   |            | bgt r3, r1, next_out |     000110      |    5'd1    |    5'd3    |    16'd21     |
-|  9   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  10  |            |    lw r4, r2(#0)     |     000011      |    5'd2    |    5'd4    |     16'd0     |
-|  11  |            |    lw r5, r3(#0)     |     000011      |    5'd3    |    5'd5    |     16'd0     |
-|  12  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  13  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  14  |            | blt r4, r5, no_swap  |     000111      |    5'd5    |    5'd4    |    16'd18     |
-|  15  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  16  |            |    sw r4, r3(#0)     |     000100      |    5'd3    |    5'd4    |     16'd0     |
-|  17  |            |    sw r5, r2(#0)     |     000100      |    5'd2    |    5'd5    |     16'd0     |
-|  18  |  no_swap   |   addi r3, r3, #1    |     000001      |    5'd3    |    5'd3    |     16'd1     |
-|  19  |            |     j inner_loop     |     001000      |    5'd0    |    5'd0    |     16'd6     |
-|  20  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  21  |  next_out  |   addi r2, r2, #1    |     000001      |    5'd2    |    5'd2    |     16'd1     |
-|  22  |            |     j outer_loop     |     001000      |    5'd0    |    5'd0    |     16'd1     |
-|  23  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  24  |    end     |        j end         |     001000      |    5'd0    |    5'd0    |    16'd24     |
 
 ## 3. 5-Stage Pipeline Elements
 
@@ -721,10 +640,39 @@ endmodule
 
 * Vector File
 
-
+```
+memory_initialization_radix=16;
+memory_initialization_vector=
+08010009,
+00000000,
+00000000,
+14220018,
+00000000,
+04430001,
+00000000,
+00000000,
+18230015,
+00000000,
+0C440000,
+0C650000,
+00000000,
+00000000,
+1CA40012,
+00000000,
+10640000,
+10450000,
+04630001,
+20000006,
+00000000,
+04420001,
+20000001,
+00000000,
+20000018;
+```
 
 * Memory Initialization File
 
+<<<<<<< HEAD
 
 
 * Testbench
@@ -734,6 +682,91 @@ endmodule
 * Waveform -->
 
 
+=======
+```
+11101001001011010100100000000000
+11100010100011011011000000000100
+11100010010011011101000000111000
+11100101100111110011000100000100
+11100010010010111100000000111000
+11100001101000001110000000000011
+11101000101111100000000000001111
+11101000101011000000000000001111
+11101000101111100000000000001111
+11101000101011000000000000001111
+11101000100111100000000000000011
+11101000100011000000000000000011
+11100011101000000011000000000000
+11100101000010110011000000001000
+11101010000000000000000000101110
+11100101000110110011000000001000
+11100010100000110011000000000001
+11100101000010110011000000001100
+11101010000000000000000000100100
+11100101000110110011000000001100
+11100001101000000011000100000011
+11100010010000110011000000000100
+11100000100000110011000000001011
+11100101000100110010000000110100
+11100101000110110011000000001000
+11100001101000000011000100000011
+11100010010000110011000000000100
+11100000100000110011000000001011
+11100101000100110011000000110100
+11100001010100100000000000000011
+10101010000000000000000000010101
+11100101000110110011000000001100
+11100001101000000011000100000011
+11100010010000110011000000000100
+11100000100000110011000000001011
+11100101000100110011000000110100
+11100101000010110011000000010000
+11100101000110110011000000001000
+11100001101000000011000100000011
+11100010010000110011000000000100
+11100000100000110011000000001011
+11100101000100110010000000110100
+11100101000110110011000000001100
+11100001101000000011000100000011
+11100010010000110011000000000100
+11100000100000110011000000001011
+11100101000000110010000000110100
+11100101000110110011000000001000
+11100001101000000011000100000011
+11100010010000110011000000000100
+11100000100000110011000000001011
+11100101000110110010000000010000
+11100101000000110010000000110100
+11100101000110110011000000001100
+11100010100000110011000000000001
+11100101000010110011000000001100
+11100101000110110011000000001100
+11100011010100110000000000001001
+11011010111111111111111111010111
+11100101000110110011000000001000
+11100010100000110011000000000001
+11100101000010110011000000001000
+11100101000110110011000000001000
+11100011010100110000000000001001
+11011010111111111111111111001101
+11100011101000000011000000000000
+11100001101000000000000000000011
+11100010010010111101000000000100
+11101000101111010100100000000000
+11100001001011111111111100011110
+00000000000000000000000100011100
+00000000000000000000000101000011
+00000000000000000000000001111011
+11111111111111111111111000111001
+00000000000000000000000000000010
+00000000000000000000000001100010
+00000000000000000000000001111101
+00000000000000000000000000001010
+00000000000000000000000001000001
+11111111111111111111111111001000
+00000000000000000000000000000000
+```
+>>>>>>> 88d4c4750f789844182fee94551a6c40c7346540
 
 ### 3.2 ID Stage
 
@@ -1711,23 +1744,179 @@ endmodule
 
 * Verilog
 
+```verilog
+/*******************************************************************************
+*     This file is owned and controlled by Xilinx and must be used             *
+*     solely for design, simulation, implementation and creation of            *
+*     design files limited to Xilinx devices or technologies. Use              *
+*     with non-Xilinx devices or technologies is expressly prohibited          *
+*     and immediately terminates your license.                                 *
+*                                                                              *
+*     XILINX IS PROVIDING THIS DESIGN, CODE, OR INFORMATION "AS IS"            *
+*     SOLELY FOR USE IN DEVELOPING PROGRAMS AND SOLUTIONS FOR                  *
+*     XILINX DEVICES.  BY PROVIDING THIS DESIGN, CODE, OR INFORMATION          *
+*     AS ONE POSSIBLE IMPLEMENTATION OF THIS FEATURE, APPLICATION              *
+*     OR STANDARD, XILINX IS MAKING NO REPRESENTATION THAT THIS                *
+*     IMPLEMENTATION IS FREE FROM ANY CLAIMS OF INFRINGEMENT,                  *
+*     AND YOU ARE RESPONSIBLE FOR OBTAINING ANY RIGHTS YOU MAY REQUIRE         *
+*     FOR YOUR IMPLEMENTATION.  XILINX EXPRESSLY DISCLAIMS ANY                 *
+*     WARRANTY WHATSOEVER WITH RESPECT TO THE ADEQUACY OF THE                  *
+*     IMPLEMENTATION, INCLUDING BUT NOT LIMITED TO ANY WARRANTIES OR           *
+*     REPRESENTATIONS THAT THIS IMPLEMENTATION IS FREE FROM CLAIMS OF          *
+*     INFRINGEMENT, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS          *
+*     FOR A PARTICULAR PURPOSE.                                                *
+*                                                                              *
+*     Xilinx products are not intended for use in life support                 *
+*     appliances, devices, or systems. Use in such applications are            *
+*     expressly prohibited.                                                    *
+*                                                                              *
+*     (c) Copyright 1995-2007 Xilinx, Inc.                                     *
+*     All rights reserved.                                                     *
+*******************************************************************************/
+// The synthesis directives "translate_off/translate_on" specified below are
+// supported by Xilinx, Mentor Graphics and Synplicity synthesis
+// tools. Ensure they are correct for your synthesis tool(s).
 
+// You must compile the wrapper file D_MEM.v when simulating
+// the core, D_MEM. When compiling the wrapper file, be sure to
+// reference the XilinxCoreLib Verilog simulation library. For detailed
+// instructions, please refer to the "CORE Generator Help".
+
+`timescale 1ns/1ps
+
+module D_MEM(
+	addra,
+	addrb,
+	clka,
+	clkb,
+	dina,
+	doutb,
+	wea);
+
+
+input [7 : 0] addra;
+input [7 : 0] addrb;
+input clka;
+input clkb;
+input [63 : 0] dina;
+output [63 : 0] doutb;
+input wea;
+
+// synthesis translate_off
+
+      BLKMEMDP_V6_3 #(
+		.c_addra_width(8),
+		.c_addrb_width(8),
+		.c_default_data("0"),
+		.c_depth_a(256),
+		.c_depth_b(256),
+		.c_enable_rlocs(0),
+		.c_has_default_data(0),
+		.c_has_dina(1),
+		.c_has_dinb(0),
+		.c_has_douta(0),
+		.c_has_doutb(1),
+		.c_has_ena(0),
+		.c_has_enb(0),
+		.c_has_limit_data_pitch(0),
+		.c_has_nda(0),
+		.c_has_ndb(0),
+		.c_has_rdya(0),
+		.c_has_rdyb(0),
+		.c_has_rfda(0),
+		.c_has_rfdb(0),
+		.c_has_sinita(0),
+		.c_has_sinitb(0),
+		.c_has_wea(1),
+		.c_has_web(0),
+		.c_limit_data_pitch(18),
+		.c_mem_init_file("D_MEM.mif"),
+		.c_pipe_stages_a(0),
+		.c_pipe_stages_b(0),
+		.c_reg_inputsa(0),
+		.c_reg_inputsb(0),
+		.c_sim_collision_check("NONE"),
+		.c_sinita_value("0"),
+		.c_sinitb_value("0"),
+		.c_width_a(64),
+		.c_width_b(64),
+		.c_write_modea(0),
+		.c_write_modeb(0),
+		.c_ybottom_addr("0"),
+		.c_yclka_is_rising(1),
+		.c_yclkb_is_rising(1),
+		.c_yena_is_high(1),
+		.c_yenb_is_high(1),
+		.c_yhierarchy("hierarchy1"),
+		.c_ymake_bmm(0),
+		.c_yprimitive_type("16kx1"),
+		.c_ysinita_is_high(1),
+		.c_ysinitb_is_high(1),
+		.c_ytop_addr("1024"),
+		.c_yuse_single_primitive(0),
+		.c_ywea_is_high(1),
+		.c_yweb_is_high(1),
+		.c_yydisable_warnings(1))
+	inst (
+		.ADDRA(addra),
+		.ADDRB(addrb),
+		.CLKA(clka),
+		.CLKB(clkb),
+		.DINA(dina),
+		.DOUTB(doutb),
+		.WEA(wea),
+		.DINB(),
+		.DOUTA(),
+		.ENA(),
+		.ENB(),
+		.NDA(),
+		.NDB(),
+		.RFDA(),
+		.RFDB(),
+		.RDYA(),
+		.RDYB(),
+		.SINITA(),
+		.SINITB(),
+		.WEB());
+
+
+// synthesis translate_on
+
+// XST black box declaration
+// box_type "black_box"
+// synthesis attribute box_type of D_MEM is "black_box"
+
+endmodule
+```
 
 * Vector File
 
-
+```
+memory_initialization_radix=16;
+memory_initialization_vector=
+0000000000000143,
+000000000000007B,
+FFFFFFFFFFFFFE39,
+0000000000000002,
+0000000000000062,
+000000000000007D,
+000000000000000A,
+0000000000000041,
+FFFFFFFFFFFFFFC8;
+```
 
 * Memory Initialization File
 
-
-
-* Testbench
-
-
-
-* Waveform
-
-
+```0000000000000000000000000000000000000000000000000000000101000011
+0000000000000000000000000000000000000000000000000000000001111011
+1111111111111111111111111111111111111111111111111111111000111001
+0000000000000000000000000000000000000000000000000000000000000010
+0000000000000000000000000000000000000000000000000000000001100010
+0000000000000000000000000000000000000000000000000000000001111101
+0000000000000000000000000000000000000000000000000000000000001010
+0000000000000000000000000000000000000000000000000000000001000001
+1111111111111111111111111111111111111111111111111111111111001000
+```
 
 #### 3.4.2 D_addr_src_MUX
 
@@ -2939,7 +3128,7 @@ endmodule
 
 ### 4.1 Schematic
 
-
+![屏幕截图 2025-03-01 234434](<Pic\屏幕截图 2025-03-01 234434.png>)
 
 ### 4.2 Verilog
 
@@ -3528,3 +3717,7 @@ module Pipeline_tb;
       
 endmodule
 ```
+
+## Extra: Github Link
+
+- https://github.com/yuezhenglingluan/USC_EE533_lab7
