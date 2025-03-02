@@ -510,7 +510,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 152033](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152033.png)
+![屏幕截图 2025-03-01 152033](<Pic\屏幕截图 2025-03-01 152033.png>)
 
 #### 3.1.2 PC+1
 
@@ -603,7 +603,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 152451](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152451.png)
+![屏幕截图 2025-03-01 152451](<Pic\屏幕截图 2025-03-01 152451.png>)
 
 #### 3.1.3 PC_MUX
 
@@ -711,9 +711,9 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 152852](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152852.png)
+![屏幕截图 2025-03-01 152852](<Pic\屏幕截图 2025-03-01 152852.png>)
 
-#### 3.1.4 I_MEM
+<!-- #### 3.1.4 I_MEM
 
 * Verilog
 
@@ -731,7 +731,7 @@ endmodule
 
 
 
-* Waveform
+* Waveform -->
 
 
 
@@ -920,7 +920,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 155841](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 155841.png)
+![屏幕截图 2025-03-01 155841](<Pic\屏幕截图 2025-03-01 155841.png>)
 
 #### 3.2.2 Control_Unit
 
@@ -1073,7 +1073,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 162105](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 162105.png)
+![屏幕截图 2025-03-01 162105](<Pic\屏幕截图 2025-03-01 162105.png>)
 
 #### 3.2.3 Branch_Detection_Unit
 
@@ -1275,7 +1275,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 184136](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 184136.png)
+![屏幕截图 2025-03-01 184136](<Pic\屏幕截图 2025-03-01 184136.png>)
 
 #### 3.2.4 Offset_Extend
 
@@ -1368,7 +1368,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 210401](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 210401.png)
+![屏幕截图 2025-03-01 210401](<Pic\屏幕截图 2025-03-01 210401.png>)
 
 ### 3.3 EX Stage
 
@@ -1575,7 +1575,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 164641](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 164641.png)
+![屏幕截图 2025-03-01 164641](<Pic\屏幕截图 2025-03-01 164641.png>)
 
 #### 3.3.2 ALU_src_MUX
 
@@ -1703,7 +1703,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 170041](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 170041.png)
+![屏幕截图 2025-03-01 170041](<Pic\屏幕截图 2025-03-01 170041.png>)
 
 ### 3.4 MEM Stage
 
@@ -1826,7 +1826,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 171147](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 171147.png)
+![屏幕截图 2025-03-01 171147](<Pic\屏幕截图 2025-03-01 171147.png>)
 
 ### 3.5 WB Stage
 
@@ -1972,7 +1972,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 174420](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 174420.png)
+![屏幕截图 2025-03-01 174420](<Pic\屏幕截图 2025-03-01 174420.png>)
 
 ### 3.6 Stage Reg
 
@@ -2084,7 +2084,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 185849](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 185849.png)
+![屏幕截图 2025-03-01 185849](<Pic\屏幕截图 2025-03-01 185849.png>)
 
 #### 3.6.2 ID_EX_Reg
 
@@ -2368,9 +2368,9 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 193117](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 193117.png)
+![屏幕截图 2025-03-01 193117](<Pic\屏幕截图 2025-03-01 193117.png>)
 
-![屏幕截图 2025-03-01 193121](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 193121.png)
+![屏幕截图 2025-03-01 193121](<Pic\屏幕截图 2025-03-01 193121.png>)
 
 #### 3.6.3 EX_M_Reg
 
@@ -2658,9 +2658,9 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 223447](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 223447.png)
+![屏幕截图 2025-03-01 223447](<Pic\屏幕截图 2025-03-01 223447.png>)
 
-![屏幕截图 2025-03-01 223451](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 223451.png)
+![屏幕截图 2025-03-01 223451](<Pic\屏幕截图 2025-03-01 223451.png>)
 
 #### 3.6.4 M_WB_Reg
 
@@ -2931,9 +2931,9 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 202316](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 202316.png)
+![屏幕截图 2025-03-01 202316](<Pic\屏幕截图 2025-03-01 202316.png>)
 
-![屏幕截图 2025-03-01 202319](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 202319.png)
+![屏幕截图 2025-03-01 202319](<Pic\屏幕截图 2025-03-01 202319.png>)
 
 ## 4. 5-Stage Pipeline Generated
 
