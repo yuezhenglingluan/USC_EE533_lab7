@@ -155,7 +155,7 @@ main:
 ```
 ### 1.3 List of instruction needs to be implemented
 
-#### 1.3.1 Lists of Instruction from Bubble Sort.s
+#### 1.3.1 Extraction of types of Instructions contained in the Bubble Sort Assembly Code
 
 | Instruction |               Explaniation                |                          Reference                           |
 | :---------: | :---------------------------------------: | :----------------------------------------------------------: |
@@ -2125,3 +2125,6 @@ endmodule
 
 * Waveform
 
+## Extra: Github Link
+
+- https://github.com/yuezhenglingluan/USC_EE533_lab7
