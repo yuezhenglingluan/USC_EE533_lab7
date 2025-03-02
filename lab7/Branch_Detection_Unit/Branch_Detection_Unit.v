@@ -8,6 +8,7 @@ module Branch_Detection_Unit
     input BEQ_ID,
     input BGT_ID,
     input BLT_ID,
+    input J_ID,
 
     output PC_ctrl
 );
@@ -15,7 +16,8 @@ module Branch_Detection_Unit
     assign PC_ctrl =
         ((BEQ_ID == 1) && (rt_data == rs_data)) ||
         ((BGT_ID == 1) && (rt_data > rs_data)) ||
-        ((BLT_ID == 1) && (rt_data < rs_data))
+        ((BLT_ID == 1) && (rt_data < rs_data)) ||
+        (J_ID == 1)
         ? 1 : 0;
 
 endmodule

@@ -30,6 +30,7 @@ module Branch_Detection_Unit_tb;
 	reg BEQ_ID;
 	reg BGT_ID;
 	reg BLT_ID;
+	reg J_ID;
 
 	// Outputs
 	wire PC_ctrl;
@@ -41,16 +42,18 @@ module Branch_Detection_Unit_tb;
 		.BEQ_ID(BEQ_ID), 
 		.BGT_ID(BGT_ID), 
 		.BLT_ID(BLT_ID), 
+		.J_ID(J_ID),
 		.PC_ctrl(PC_ctrl)
 	);
 
 	initial begin
 		// Initialize Inputs
-		rs_data = 0;
-		rt_data = 0;
+		rt_data = 64'd1;
+		rs_data = 64'd0;
 		BEQ_ID = 0;
 		BGT_ID = 0;
 		BLT_ID = 0;
+		J_ID = 0;
 
 		// Wait 100 ns for global reset to finish
 		#100;
@@ -62,6 +65,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 1;
 		BGT_ID = 0;
 		BLT_ID = 0;
+		J_ID = 0;
 
 		#100;
 		rt_data = 64'd1;
@@ -69,6 +73,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 1;
 		BGT_ID = 0;
 		BLT_ID = 0;
+		J_ID = 0;
 
 		#100;
 		rt_data = 64'd1;
@@ -76,6 +81,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 1;
 		BGT_ID = 0;
 		BLT_ID = 0;
+		J_ID = 0;
 
 		#100;
 		rt_data = 64'd1;
@@ -83,6 +89,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 0;
 		BGT_ID = 1;
 		BLT_ID = 0;
+		J_ID = 0;
 
 		#100;
 		rt_data = 64'd1;
@@ -90,6 +97,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 0;
 		BGT_ID = 1;
 		BLT_ID = 0;
+		J_ID = 0;
 
 		#100;
 		rt_data = 64'd1;
@@ -97,6 +105,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 0;
 		BGT_ID = 1;
 		BLT_ID = 0;
+		J_ID = 0;
 
 		#100;
 		rt_data = 64'd1;
@@ -104,6 +113,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 0;
 		BGT_ID = 0;
 		BLT_ID = 1;
+		J_ID = 0;
 
 		#100;
 		rt_data = 64'd1;
@@ -111,6 +121,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 0;
 		BGT_ID = 0;
 		BLT_ID = 1;
+		J_ID = 0;
 
 		#100;
 		rt_data = 64'd1;
@@ -118,6 +129,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 0;
 		BGT_ID = 0;
 		BLT_ID = 1;
+		J_ID = 0;
 
 		#100;
 		rt_data = 64'd1;
@@ -125,6 +137,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 0;
 		BGT_ID = 0;
 		BLT_ID = 0;
+		J_ID = 1;
 
 		#100;
 		rt_data = 64'd1;
@@ -132,6 +145,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 0;
 		BGT_ID = 0;
 		BLT_ID = 0;
+		J_ID = 1;
 
 		#100;
 		rt_data = 64'd1;
@@ -139,6 +153,7 @@ module Branch_Detection_Unit_tb;
 		BEQ_ID = 0;
 		BGT_ID = 0;
 		BLT_ID = 0;
+		J_ID = 1;
 
 		#100;
 		$stop;
