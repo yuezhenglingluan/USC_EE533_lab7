@@ -153,8 +153,9 @@ main:
 	.ident	"GCC: (Arm GNU Toolchain 14.2.Rel1 (Build arm-14.52)) 14.2.1 20241119"
 
 ```
+### 1.3 List of instruction needs to be implemented
 
- - Included Instructions' Description and Reference
+#### 1.3.1 Extraction of types of Instructions contained in the Bubble Sort Assembly Code
 
 | Instruction |               Explaniation                |                          Reference                           |
 | :---------: | :---------------------------------------: | :----------------------------------------------------------: |
@@ -176,9 +177,9 @@ main:
 |     ble     |          Branch if less or equal          | https://developer.arm.com/documentation/100076/0100/A64-Instruction-Set-Reference/A64-General-Instructions/B-cond/Condition-code-suffixes-and-related-flags |
 |     bx      |              Indirect branch              | https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/branch-and-control-instructions/b--bl--bx--and-blx |
 
-### 1.3 List of instruction needs to be implemented
 
-#### 1.3.1 Instruction Format Definition
+
+#### 1.3.2 Instruction Format Definition
 
 * Instruction Format definition
 
@@ -208,7 +209,7 @@ main:
 |     ble     | 001111  |          Branch if less or equal          |
 |     bx      | 010000  |             Indirect branchs              |
 
-#### 1.3.2 Special Registers in ARM ISA
+#### 1.3.3 Special Registers in ARM ISA
 
 | Register Name | Actual Register Location | Description           |
 | :-----------: | :----------------------: | :-------------------: |
@@ -290,115 +291,35 @@ end:
 #18 b end                 @ end
 ```
 
-### 2.2 MIPS Instruction Format
-
-#### 2.2.1 Pesudo Instruction
+* Machine Code
 
 ```
-lw r0, array_addr
-lw r1, array_size
-subi r1, r1, #1
-mov r2, #0
-outer_loop:
-beq r2, r1, end
-addi r3, r2, #1
-inner_loop:
-bgt r3, r1, next_out
-lw r4, r0(r2)
-lw r5, r0(r3)
-blt r4, r5, no_swap
-sw r4, r0(r3)
-sw r5, r0(r2)
-no_swap:
-addi r3, r3, #1
-j inner_loop
-next_out:
-addi r2, r2, #1
-j outer_loop
-end:
-j end
+00001000000000010000000000001001  
+00000000000000000000000000000000  
+00000000000000000000000000000000  
+00010100001000100000000000011000  
+00000000000000000000000000000000  
+00000100010000110000000000000001  
+00000000000000000000000000000000  
+00000000000000000000000000000000  
+00011000001000110000000000010101  
+00000000000000000000000000000000  
+00001100010001000000000000000000  
+00001100011001010000000000000000  
+00000000000000000000000000000000  
+00000000000000000000000000000000  
+00011100101001000000000000010010  
+00000000000000000000000000000000  
+00010000011001000000000000000000  
+00010000010001010000000000000000  
+00000100011000110000000000000001  
+00100000000000000000000000000110  
+00000000000000000000000000000000  
+00000100010000100000000000000001  
+00100000000000000000000000000001  
+00000000000000000000000000000000  
+00100000000000000000000000011000  
 ```
-
-#### 2.2.2 Real MIPS Instruction
-
-* With manually introduced NOOP, we can avoid data dependency problem and early branch flush problem.
-
-```
-movi r1, #9
-outer_loop:
-noop
-noop
-beq r2, r1, end
-noop
-addi r3, r2, #1
-inner_loop:
-noop
-noop
-bgt r3, r1, next_out
-noop
-lw r4, r2(#0)
-lw r5, r3(#0)
-noop
-noop
-blt r4, r5, no_swap
-noop
-sw r4, r3(#0)
-sw r5, r2(#0)
-no_swap:
-addi r3, r3, #1
-j inner_loop
-noop
-next_out:
-addi r2, r2, #1
-j outer_loop
-noop
-end:
-j end
-```
-
-* Instruction OP Code
-
-| Instr | OP Code [31:26] |
-| :---: | :-------------: |
-| noop  |     000000      |
-| addi  |     000001      |
-| movi  |     000010      |
-|  lw   |     000011      |
-|  sw   |     000100      |
-|  beq  |     000101      |
-|  bgt  |     000110      |
-|  blt  |     000111      |
-|   j   |     001000      |
-
-* Instruction Table
-
-| Addr |   Label    |        Instr         | OP Code [31:26] | Rs [25:21] | Rt [20:16] | Offset [15:0] |
-| :--: | :--------: | :------------------: | :-------------: | :--------: | :--------: | :-----------: |
-|  0   |            |     movi r1, #9      |     000010      |    5'd0    |    5'd1    |     16'd9     |
-|  1   | outer_loop |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  2   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  3   |            |   beq r2, r1, end    |     000101      |    5'd1    |    5'd2    |    16'd24     |
-|  4   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  5   |            |   addi r3, r2, #1    |     000001      |    5'd2    |    5'd3    |     16'd1     |
-|  6   | inner_loop |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  7   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  8   |            | bgt r3, r1, next_out |     000110      |    5'd1    |    5'd3    |    16'd21     |
-|  9   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  10  |            |    lw r4, r2(#0)     |     000011      |    5'd2    |    5'd4    |     16'd0     |
-|  11  |            |    lw r5, r3(#0)     |     000011      |    5'd3    |    5'd5    |     16'd0     |
-|  12  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  13  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  14  |            | blt r4, r5, no_swap  |     000111      |    5'd5    |    5'd4    |    16'd18     |
-|  15  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  16  |            |    sw r4, r3(#0)     |     000100      |    5'd3    |    5'd4    |     16'd0     |
-|  17  |            |    sw r5, r2(#0)     |     000100      |    5'd2    |    5'd5    |     16'd0     |
-|  18  |  no_swap   |   addi r3, r3, #1    |     000001      |    5'd3    |    5'd3    |     16'd1     |
-|  19  |            |     j inner_loop     |     001000      |    5'd0    |    5'd0    |     16'd6     |
-|  20  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  21  |  next_out  |   addi r2, r2, #1    |     000001      |    5'd2    |    5'd2    |     16'd1     |
-|  22  |            |     j outer_loop     |     001000      |    5'd0    |    5'd0    |     16'd1     |
-|  23  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
-|  24  |    end     |        j end         |     001000      |    5'd0    |    5'd0    |    16'd24     |
 
 ## 3. 5-Stage Pipeline Elements
 
@@ -509,8 +430,7 @@ endmodule
 ```
 
 * Waveform
-
-![屏幕截图 2025-03-01 152033](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152033.png)
+![alt text](<Pic/Screenshot 2025-03-01 152033.png>)
 
 #### 3.1.2 PC+1
 
@@ -603,7 +523,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 152451](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152451.png)
+![屏幕截图 2025-03-01 152451](<Pic\屏幕截图 2025-03-01 152451.png>)
 
 #### 3.1.3 PC_MUX
 
@@ -711,7 +631,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 152852](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152852.png)
+![屏幕截图 2025-03-01 152852](<Pic\屏幕截图 2025-03-01 152852.png>)
 
 #### 3.1.4 I_MEM
 
@@ -920,7 +840,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 155841](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 155841.png)
+![屏幕截图 2025-03-01 155841](<Pic\屏幕截图 2025-03-01 155841.png>)
 
 #### 3.2.2 Control_Unit
 
@@ -1073,7 +993,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 162105](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 162105.png)
+![屏幕截图 2025-03-01 162105](<Pic\屏幕截图 2025-03-01 162105.png>)
 
 #### 3.2.3 Branch_Detection_Unit
 
@@ -1275,7 +1195,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 184136](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 184136.png)
+![屏幕截图 2025-03-01 184136](<Pic\屏幕截图 2025-03-01 184136.png>)
 
 #### 3.2.4 Offset_Extend
 
@@ -1288,11 +1208,11 @@ module Offset_Extend
 (
     input [15:0] Offset,
 
-    output [63:0] Offset_ID
+    output [31:0] Offset_ID
 );
 
     assign Offset_ID[15:0] = Offset;
-    assign Offset_ID[63:16] = 48'b0;
+    assign Offset_ID[31:16] = 16'b0;
 
 endmodule
 ```
@@ -1330,7 +1250,7 @@ module Offset_Extend_tb;
 	reg [15:0] Offset;
 
 	// Outputs
-    wire [63:0] Offset_ID;
+	wire [31:0] Offset_ID;
 
 	// Instantiate the Unit Under Test (UUT)
 	Offset_Extend uut (
@@ -1368,7 +1288,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 210401](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 210401.png)
+![屏幕截图 2025-03-01 164227](<Pic\屏幕截图 2025-03-01 164227.png>)
 
 ### 3.3 EX Stage
 
@@ -1575,7 +1495,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 164641](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 164641.png)
+![屏幕截图 2025-03-01 164641](<Pic\屏幕截图 2025-03-01 164641.png>)
 
 #### 3.3.2 ALU_src_MUX
 
@@ -1703,7 +1623,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 170041](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 170041.png)
+![屏幕截图 2025-03-01 170041](<Pic\屏幕截图 2025-03-01 170041.png>)
 
 ### 3.4 MEM Stage
 
@@ -1739,14 +1659,13 @@ endmodule
 module D_addr_src_MUX
 (
     input [63:0] ALU_result_M,
-    input [4:0] rt_M,
+    input [63:0] rt_M,
     input SW_M,
 
     output [7:0] D_addr
 );
 
-    assign D_addr[4:0] = (SW_M == 1) ? ALU_result_M[4:0] : rt_M[4:0];
-    assign D_addr[7:5] = 0;
+    assign D_addr = (SW_M == 1) ? ALU_result_M[7:0] : rt_M[7:0];
 
 endmodule
 ```
@@ -1782,7 +1701,7 @@ module D_addr_src_MUX_tb;
 
 	// Inputs
 	reg [63:0] ALU_result_M;
-	reg [4:0] rt_M;
+	reg [63:0] rt_M;
 	reg SW_M;
 
 	// Outputs
@@ -1808,12 +1727,12 @@ module D_addr_src_MUX_tb;
 		// Add stimulus here
 		#100;
 		ALU_result_M = 64'd1;
-		rt_M = 5'd2;
+		rt_M = 64'd2;
 		SW_M = 0;
 
 		#100;
 		ALU_result_M = 64'd3;
-		rt_M = 5'd4;
+		rt_M = 64'd4;
 		SW_M = 1;
 
 		#100;
@@ -1826,7 +1745,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 171147](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 171147.png)
+![屏幕截图 2025-03-01 171147](<Pic\屏幕截图 2025-03-01 171147.png>)
 
 ### 3.5 WB Stage
 
@@ -1972,7 +1891,7 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 174420](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 174420.png)
+![屏幕截图 2025-03-01 174420](<Pic\屏幕截图 2025-03-01 174420.png>)
 
 ### 3.6 Stage Reg
 
@@ -2084,1447 +2003,48 @@ endmodule
 
 * Waveform
 
-![屏幕截图 2025-03-01 185849](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 185849.png)
+![屏幕截图 2025-03-01 185849](<Pic\屏幕截图 2025-03-01 185849.png>)
 
 #### 3.6.2 ID_EX_Reg
 
 * Verilog
 
-```verilog
-`timescale 1ns / 1ps
 
-module ID_EX_Reg
-(
-    input clk,
-    input rst,
-
-    input [3:0] ALU_OP_ID,
-    input NOOP_ID,
-    input ADDI_ID,
-    input MOVI_ID,
-    input LW_ID,
-    input SW_ID,
-
-    input WME_ID,
-    input WRE_ID,
-    input [63:0] rs_data_ID,
-    input [63:0] rt_data_ID,
-    input [4:0] rt_ID,
-    input [63:0] Offset_ID,
-
-    output reg [3:0] ALU_OP_EX,
-    output reg NOOP_EX,
-    output reg ADDI_EX,
-    output reg MOVI_EX,
-    output reg LW_EX,
-    output reg SW_EX,
-    
-    output reg WME_EX,
-    output reg WRE_EX,
-    output reg [63:0] rs_data_EX,
-    output reg [63:0] rt_data_EX,
-    output reg [4:0] rt_EX,
-    output reg [63:0] Offset_EX
-);
-
-    always @(posedge clk) begin
-        if (rst) begin
-            ALU_OP_EX <= 0;
-            NOOP_EX <= 0;
-            ADDI_EX <= 0;
-            MOVI_EX <= 0;
-            LW_EX <= 0;
-            SW_EX <= 0;
-            WME_EX <= 0;
-            WRE_EX <= 0;
-            rs_data_EX <= 0;
-            rt_data_EX <= 0;
-            rt_EX <= 0;
-            Offset_EX <= 0;
-        end
-        else begin
-            ALU_OP_EX <= ALU_OP_ID;
-            NOOP_EX <= NOOP_ID;
-            ADDI_EX <= ADDI_ID;
-            MOVI_EX <= MOVI_ID;
-            LW_EX <= LW_ID;
-            SW_EX <= SW_ID;
-            WME_EX <= WME_ID;
-            WRE_EX <= WRE_ID;
-            rs_data_EX <= rs_data_ID;
-            rt_data_EX <= rt_data_ID;
-            rt_EX <= rt_ID;
-            Offset_EX <= Offset_ID;
-        end
-    end
-
-endmodule
-```
 
 * Testbench
 
-```verilog
-`timescale 1ns / 1ps
 
-////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer:
-//
-// Create Date:   19:13:54 03/01/2025
-// Design Name:   ID_EX_Reg
-// Module Name:   E:/Documents and Settings/student/EE533_Lab7/ID_EX_Reg_tb.v
-// Project Name:  EE533_Lab7
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: ID_EX_Reg
-//
-// Dependencies:
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-////////////////////////////////////////////////////////////////////////////////
-
-module ID_EX_Reg_tb;
-
-	// Inputs
-	reg clk;
-	reg rst;
-	reg [3:0] ALU_OP_ID;
-	reg NOOP_ID;
-	reg ADDI_ID;
-	reg MOVI_ID;
-	reg LW_ID;
-	reg SW_ID;
-	reg WME_ID;
-	reg WRE_ID;
-	reg [63:0] rs_data_ID;
-	reg [63:0] rt_data_ID;
-	reg [4:0] rt_ID;
-	reg [63:0] Offset_ID;
-
-	// Outputs
-	wire [3:0] ALU_OP_EX;
-	wire NOOP_EX;
-	wire ADDI_EX;
-	wire MOVI_EX;
-	wire LW_EX;
-	wire SW_EX;
-	wire WME_EX;
-	wire WRE_EX;
-	wire [63:0] rs_data_EX;
-	wire [63:0] rt_data_EX;
-	wire [4:0] rt_EX;
-	wire [63:0] Offset_EX;
-
-	// Instantiate the Unit Under Test (UUT)
-	ID_EX_Reg uut (
-		.clk(clk), 
-		.rst(rst), 
-		.ALU_OP_ID(ALU_OP_ID), 
-		.NOOP_ID(NOOP_ID), 
-		.ADDI_ID(ADDI_ID), 
-		.MOVI_ID(MOVI_ID), 
-		.LW_ID(LW_ID), 
-		.SW_ID(SW_ID), 
-		.WME_ID(WME_ID), 
-		.WRE_ID(WRE_ID), 
-		.rs_data_ID(rs_data_ID), 
-		.rt_data_ID(rt_data_ID), 
-		.rt_ID(rt_ID), 
-		.Offset_ID(Offset_ID), 
-		.ALU_OP_EX(ALU_OP_EX), 
-		.NOOP_EX(NOOP_EX), 
-		.ADDI_EX(ADDI_EX), 
-		.MOVI_EX(MOVI_EX), 
-		.LW_EX(LW_EX), 
-		.SW_EX(SW_EX), 
-		.WME_EX(WME_EX), 
-		.WRE_EX(WRE_EX), 
-		.rs_data_EX(rs_data_EX), 
-		.rt_data_EX(rt_data_EX), 
-		.rt_EX(rt_EX), 
-		.Offset_EX(Offset_EX)
-	);
-
-	always #50 clk = ~clk;
-
-	initial begin
-		// Initialize Inputs
-		clk = 1;
-		rst = 1;
-		ALU_OP_ID = 0;
-		NOOP_ID = 0;
-		ADDI_ID = 0;
-		MOVI_ID = 0;
-		LW_ID = 0;
-		SW_ID = 0;
-		WME_ID = 0;
-		WRE_ID = 0;
-		rs_data_ID = 0;
-		rt_data_ID = 0;
-		rt_ID = 0;
-		Offset_ID = 0;
-
-		// Wait 100 ns for global reset to finish
-		#100;
-		rst = 0;
-        
-		// Add stimulus here
-		@(posedge clk);
-		ALU_OP_ID = 4'd0;
-		NOOP_ID = 0;
-		ADDI_ID = 0;
-		MOVI_ID = 1;
-		LW_ID = 0;
-		SW_ID = 0;
-		WME_ID = 0;
-		WRE_ID = 1;
-		rs_data_ID = 0;
-		rt_data_ID = 0;
-		rt_ID = 5'd1;
-		Offset_ID = 16'd9;
-
-		@(posedge clk);
-		ALU_OP_ID = 4'd0;
-		NOOP_ID = 1;
-		ADDI_ID = 0;
-		MOVI_ID = 0;
-		LW_ID = 0;
-		SW_ID = 0;
-		WME_ID = 0;
-		WRE_ID = 0;
-		rs_data_ID = 0;
-		rt_data_ID = 0;
-		rt_ID = 5'd0;
-		Offset_ID = 16'd0;
-
-		@(posedge clk);
-		ALU_OP_ID = 4'd0;
-		NOOP_ID = 1;
-		ADDI_ID = 0;
-		MOVI_ID = 0;
-		LW_ID = 0;
-		SW_ID = 0;
-		WME_ID = 0;
-		WRE_ID = 0;
-		rs_data_ID = 0;
-		rt_data_ID = 0;
-		rt_ID = 5'd0;
-		Offset_ID = 16'd0;
-
-		@(posedge clk);
-		ALU_OP_ID = 4'd1;
-		NOOP_ID = 0;
-		ADDI_ID = 0;
-		MOVI_ID = 0;
-		LW_ID = 0;
-		SW_ID = 0;
-		WME_ID = 0;
-		WRE_ID = 0;
-		rs_data_ID = 0;
-		rt_data_ID = 0;
-		rt_ID = 5'd0;
-		Offset_ID = 16'd0;
-
-		@(posedge clk);
-		ALU_OP_ID = 4'd0;
-		NOOP_ID = 1;
-		ADDI_ID = 0;
-		MOVI_ID = 0;
-		LW_ID = 0;
-		SW_ID = 0;
-		WME_ID = 0;
-		WRE_ID = 0;
-		rs_data_ID = 0;
-		rt_data_ID = 0;
-		rt_ID = 5'd0;
-		Offset_ID = 16'd0;
-
-		@(posedge clk);
-		ALU_OP_ID = 4'd0;
-		NOOP_ID = 0;
-		ADDI_ID = 1;
-		MOVI_ID = 0;
-		LW_ID = 0;
-		SW_ID = 0;
-		WME_ID = 0;
-		WRE_ID = 1;
-		rs_data_ID = 0;
-		rt_data_ID = 0;
-		rt_ID = 5'd3;
-		Offset_ID = 16'd1;
-
-		@(posedge clk);
-		$stop;
-
-	end
-      
-endmodule
-```
 
 * Waveform
 
-![屏幕截图 2025-03-01 193117](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 193117.png)
 
-![屏幕截图 2025-03-01 193121](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 193121.png)
 
 #### 3.6.3 EX_M_Reg
 
 * Verilog
 
-```verilog
-`timescale 1ns / 1ps
 
-module EX_M_Reg
-(
-    input clk,
-    input rst,
-
-    input NOOP_EX,
-    input ADDI_EX,
-    input MOVI_EX,
-    input LW_EX,
-    input SW_EX,
-
-    input WME_EX,
-    input WRE_EX,
-    input [63:0] ALU_result_EX,
-    input [63:0] rs_data_EX,
-    input [63:0] rt_data_EX,
-    input [4:0] rt_EX,
-    input [63:0] Offset_EX,
-
-    output reg NOOP_M,
-    output reg ADDI_M,
-    output reg MOVI_M,
-    output reg LW_M,
-    output reg SW_M,
-
-    output reg WME_M,
-    output reg WRE_M,
-    output reg [63:0] ALU_result_M,
-    output reg [63:0] rs_data_M,
-    output reg [63:0] rt_data_M,
-    output reg [4:0] rt_M,
-    output reg [63:0] Offset_M
-);
-
-    always @(posedge clk) begin
-        if (rst) begin
-            NOOP_M <= 0;
-            ADDI_M <= 0;
-            MOVI_M <= 0;
-            LW_M <= 0;
-            SW_M <= 0;
-
-            WME_M <= 0;
-            WRE_M <= 0;
-            ALU_result_M <= 0;
-            rs_data_M <= 0;
-            rt_data_M <= 0;
-            rt_M <= 0;
-            Offset_M <= 0;
-        end
-        else begin
-            NOOP_M <= NOOP_EX;
-            ADDI_M <= ADDI_EX;
-            MOVI_M <= MOVI_EX;
-            LW_M <= LW_EX;
-            SW_M <= SW_EX;
-
-            WME_M <= WME_EX;
-            WRE_M <= WRE_EX;
-            ALU_result_M <= ALU_result_EX;
-            rs_data_M <= rs_data_EX;
-            rt_data_M <= rt_data_EX;
-            rt_M <= rt_EX;
-            Offset_M <= Offset_EX;
-        end
-    end
-
-endmodule
-```
 
 * Testbench
 
-```verilog
-`timescale 1ns / 1ps
 
-////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer:
-//
-// Create Date:   19:34:10 03/01/2025
-// Design Name:   EX_M_Reg
-// Module Name:   E:/Documents and Settings/student/EE533_Lab7/EX_M_Reg_tb.v
-// Project Name:  EE533_Lab7
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: EX_M_Reg
-//
-// Dependencies:
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-////////////////////////////////////////////////////////////////////////////////
-
-module EX_M_Reg_tb;
-
-	// Inputs
-	reg clk;
-	reg rst;
-	reg NOOP_EX;
-	reg ADDI_EX;
-	reg MOVI_EX;
-	reg LW_EX;
-	reg SW_EX;
-	reg WME_EX;
-	reg WRE_EX;
-	reg [63:0] ALU_result_EX;
-	reg [63:0] rs_data_EX;
-	reg [63:0] rt_data_EX;
-	reg [4:0] rt_EX;
-	reg [63:0] Offset_EX;
-
-	// Outputs
-	wire NOOP_M;
-	wire ADDI_M;
-	wire MOVI_M;
-	wire LW_M;
-	wire SW_M;
-	wire WME_M;
-	wire WRE_M;
-	wire [63:0] ALU_result_M;
-	wire [63:0] rs_data_M;
-	wire [63:0] rt_data_M;
-	wire [4:0] rt_M;
-	wire [63:0] Offset_M;
-
-	// Instantiate the Unit Under Test (UUT)
-	EX_M_Reg uut (
-		.clk(clk), 
-		.rst(rst), 
-		.NOOP_EX(NOOP_EX), 
-		.ADDI_EX(ADDI_EX), 
-		.MOVI_EX(MOVI_EX), 
-		.LW_EX(LW_EX), 
-		.SW_EX(SW_EX), 
-		.WME_EX(WME_EX), 
-		.WRE_EX(WRE_EX), 
-		.ALU_result_EX(ALU_result_EX), 
-		.rs_data_EX(rs_data_EX), 
-		.rt_data_EX(rt_data_EX),
-		.rt_EX(rt_EX), 
-		.Offset_EX(Offset_EX), 
-		.NOOP_M(NOOP_M), 
-		.ADDI_M(ADDI_M), 
-		.MOVI_M(MOVI_M), 
-		.LW_M(LW_M), 
-		.SW_M(SW_M),
-		.WME_M(WME_M),
-		.WRE_M(WRE_M), 
-		.ALU_result_M(ALU_result_M), 
-		.rs_data_M(rs_data_M), 
-		.rt_data_M(rt_data_M),
-		.rt_M(rt_M), 
-		.Offset_M(Offset_M)
-	);
-
-	always #50 clk = ~clk;
-
-	initial begin
-		// Initialize Inputs
-		clk = 1;
-		rst = 1;
-		NOOP_EX = 0;
-		ADDI_EX = 0;
-		MOVI_EX = 0;
-		LW_EX = 0;
-		SW_EX = 0;
-		WME_EX = 0;
-		WRE_EX = 0;
-		ALU_result_EX = 0;
-		rs_data_EX = 0;
-		rt_data_EX = 0;
-		rt_EX = 0;
-		Offset_EX = 0;
-
-		// Wait 100 ns for global reset to finish
-		@(posedge clk);
-		rst = 0;
-        
-		// Add stimulus here
-		@(posedge clk);
-		NOOP_EX = 0;
-		ADDI_EX = 0;
-		MOVI_EX = 1;
-		LW_EX = 0;
-		SW_EX = 0;
-		WME_EX = 0;
-		WRE_EX = 1;
-		ALU_result_EX = 0;
-		rs_data_EX = 0;
-		rt_data_EX = 0;
-		rt_EX = 5'd1;
-		Offset_EX = 16'd9;
-
-		@(posedge clk);
-		NOOP_EX = 1;
-		ADDI_EX = 0;
-		MOVI_EX = 0;
-		LW_EX = 0;
-		SW_EX = 0;
-		WME_EX = 0;
-		WRE_EX = 0;
-		ALU_result_EX = 0;
-		rs_data_EX = 0;
-		rt_data_EX = 0;
-		rt_EX = 5'd0;
-		Offset_EX = 16'd0;
-
-		@(posedge clk);
-		NOOP_EX = 1;
-		ADDI_EX = 0;
-		MOVI_EX = 0;
-		LW_EX = 0;
-		SW_EX = 0;
-		WME_EX = 0;
-		WRE_EX = 0;
-		ALU_result_EX = 0;
-		rs_data_EX = 0;
-		rt_data_EX = 0;
-		rt_EX = 5'd0;
-		Offset_EX = 16'd0;
-
-		@(posedge clk);
-		NOOP_EX = 0;
-		ADDI_EX = 0;
-		MOVI_EX = 0;
-		LW_EX = 0;
-		SW_EX = 0;
-		WME_EX = 0;
-		WRE_EX = 0;
-		ALU_result_EX = 0;
-		rs_data_EX = 0;
-		rt_data_EX = 0;
-		rt_EX = 5'd2;
-		Offset_EX = 16'd24;
-
-		@(posedge clk);
-		NOOP_EX = 1;
-		ADDI_EX = 0;
-		MOVI_EX = 0;
-		LW_EX = 0;
-		SW_EX = 0;
-		WME_EX = 0;
-		WRE_EX = 0;
-		ALU_result_EX = 0;
-		rs_data_EX = 0;
-		rt_data_EX = 0;
-		rt_EX = 5'd0;
-		Offset_EX = 16'd0;
-
-		@(posedge clk);
-		NOOP_EX = 0;
-		ADDI_EX = 1;
-		MOVI_EX = 0;
-		LW_EX = 0;
-		SW_EX = 0;
-		WME_EX = 0;
-		WRE_EX = 0;
-		ALU_result_EX = 64'd1;
-		rs_data_EX = 64'd9;
-		rt_data_EX = 0;
-		rt_EX = 5'd3;
-		Offset_EX = 16'd0;
-
-		@(posedge clk);
-
-		@(posedge clk);
-		$stop;
-
-	end
-      
-endmodule
-```
 
 * Waveform
 
-![屏幕截图 2025-03-01 223447](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 223447.png)
 
-![屏幕截图 2025-03-01 223451](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 223451.png)
 
 #### 3.6.4 M_WB_Reg
 
 * Verilog
 
-```verilog
-`timescale 1ns / 1ps
 
-module M_WB_Reg
-(
-    input clk,
-    input rst,
-
-    input NOOP_M,
-    input ADDI_M,
-    input MOVI_M,
-    input LW_M,
-    input SW_M,
-
-    input WRE_M,
-    input [63:0] D_out_M,
-    input [63:0] rs_data_M,
-    input [63:0] ALU_result_M,
-    input [63:0] Offset_M,
-    input [4:0] rt_M,
-
-    output reg NOOP_WB,
-    output reg ADDI_WB,
-    output reg MOVI_WB,
-    output reg LW_WB,
-    output reg SW_WB,
-
-    output reg WRE_WB,
-    output reg [63:0] D_out_WB,
-    output reg [63:0] rs_data_WB,
-    output reg [63:0] ALU_result_WB,
-    output reg [63:0] Offset_WB,
-    output reg [2:0] rt_WB
-);
-
-    always @(posedge clk) begin
-        if (rst) begin
-            NOOP_WB <= 0;
-            ADDI_WB <= 0;
-            MOVI_WB <= 0;
-            LW_WB <= 0;
-            SW_WB <= 0;
-            WRE_WB <= 0;
-            D_out_WB <= 0;
-            rs_data_WB <= 0;
-            ALU_result_WB <= 0;
-            Offset_WB <= 0;
-            rt_WB <= 0;
-        end
-        else begin
-            NOOP_WB <= NOOP_M;
-            ADDI_WB <= ADDI_M;
-            MOVI_WB <= MOVI_M;
-            LW_WB <= LW_M;
-            SW_WB <= SW_M;
-            WRE_WB <= WRE_M;
-            D_out_WB <= D_out_M;
-            rs_data_WB <= rs_data_M;
-            ALU_result_WB <= ALU_result_M;
-            Offset_WB <= Offset_M;
-            rt_WB <= rt_M[2:0];
-        end
-    end
-
-endmodule
-```
 
 * Testbench
 
-```verilog
-`timescale 1ns / 1ps
 
-////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer:
-//
-// Create Date:   19:46:24 03/01/2025
-// Design Name:   M_WB_Reg
-// Module Name:   E:/Documents and Settings/student/EE533_Lab7/M_WB_Reg_tb.v
-// Project Name:  EE533_Lab7
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: M_WB_Reg
-//
-// Dependencies:
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-////////////////////////////////////////////////////////////////////////////////
-
-module M_WB_Reg_tb;
-
-	// Inputs
-	reg clk;
-	reg rst;
-	reg NOOP_M;
-	reg ADDI_M;
-	reg MOVI_M;
-	reg LW_M;
-	reg SW_M;
-	reg WRE_M;
-	reg [63:0] D_out_M;
-	reg [63:0] rs_data_M;
-	reg [63:0] ALU_result_M;
-	reg [63:0] Offset_M;
-	reg [4:0] rt_M;
-
-	// Outputs
-	wire NOOP_WB;
-	wire ADDI_WB;
-	wire MOVI_WB;
-	wire LW_WB;
-	wire SW_WB;
-	wire WRE_WB;
-	wire [63:0] D_out_WB;
-	wire [63:0] rs_data_WB;
-	wire [63:0] ALU_result_WB;
-	wire [63:0] Offset_WB;
-	wire [2:0] rt_WB;
-
-	// Instantiate the Unit Under Test (UUT)
-	M_WB_Reg uut (
-		.clk(clk), 
-		.rst(rst), 
-		.NOOP_M(NOOP_M), 
-		.ADDI_M(ADDI_M), 
-		.MOVI_M(MOVI_M), 
-		.LW_M(LW_M), 
-		.SW_M(SW_M), 
-		.WRE_M(WRE_M), 
-		.D_out_M(D_out_M), 
-		.rs_data_M(rs_data_M), 
-		.ALU_result_M(ALU_result_M), 
-		.Offset_M(Offset_M), 
-		.rt_M(rt_M), 
-		.NOOP_WB(NOOP_WB), 
-		.ADDI_WB(ADDI_WB), 
-		.MOVI_WB(MOVI_WB), 
-		.LW_WB(LW_WB), 
-		.SW_WB(SW_WB), 
-		.WRE_WB(WRE_WB), 
-		.D_out_WB(D_out_WB), 
-		.rs_data_WB(rs_data_WB), 
-		.ALU_result_WB(ALU_result_WB), 
-		.Offset_WB(Offset_WB), 
-		.rt_WB(rt_WB)
-	);
-
-	always #50 clk = ~clk;
-
-	initial begin
-		// Initialize Inputs
-		clk = 1;
-		rst = 1;
-		NOOP_M = 0;
-		ADDI_M = 0;
-		MOVI_M = 0;
-		LW_M = 0;
-		SW_M = 0;
-		WRE_M = 0;
-		D_out_M = 0;
-		rs_data_M = 0;
-		ALU_result_M = 0;
-		Offset_M = 0;
-		rt_M = 0;
-
-		// Wait 100 ns for global reset to finish
-		@(posedge clk);
-		rst = 0;
-        
-		// Add stimulus here
-		@(posedge clk);
-		NOOP_M = 0;
-		ADDI_M = 0;
-		MOVI_M = 1;
-		LW_M = 0;
-		SW_M = 0;
-		WRE_M = 1;
-		D_out_M = 64'd123;
-		rs_data_M = 64'd0;
-		ALU_result_M = 0;
-		Offset_M = 64'd9;
-		rt_M = 5'd1;
-
-		@(posedge clk);
-		NOOP_M = 1;
-		ADDI_M = 0;
-		MOVI_M = 0;
-		LW_M = 0;
-		SW_M = 0;
-		WRE_M = 0;
-		D_out_M = 64'd323;
-		rs_data_M = 64'd0;
-		ALU_result_M = 0;
-		Offset_M = 64'd0;
-		rt_M = 5'd0;
-
-		@(posedge clk);
-		NOOP_M = 1;
-		ADDI_M = 0;
-		MOVI_M = 0;
-		LW_M = 0;
-		SW_M = 0;
-		WRE_M = 0;
-		D_out_M = 64'd323;
-		rs_data_M = 64'd0;
-		ALU_result_M = 0;
-		Offset_M = 64'd0;
-		rt_M = 5'd0;
-
-		@(posedge clk);
-		NOOP_M = 0;
-		ADDI_M = 0;
-		MOVI_M = 0;
-		LW_M = 0;
-		SW_M = 0;
-		WRE_M = 0;
-		D_out_M = 64'd323;
-		rs_data_M = 64'd0;
-		ALU_result_M = 0;
-		Offset_M = 64'd0;
-		rt_M = 5'd0;
-
-		@(posedge clk);
-		NOOP_M = 0;
-		ADDI_M = 0;
-		MOVI_M = 0;
-		LW_M = 0;
-		SW_M = 0;
-		WRE_M = 0;
-		D_out_M = 64'd323;
-		rs_data_M = 64'd0;
-		ALU_result_M = 0;
-		Offset_M = 64'd0;
-		rt_M = 5'd0;
-
-		@(posedge clk);
-		NOOP_M = 0;
-		ADDI_M = 1;
-		MOVI_M = 0;
-		LW_M = 0;
-		SW_M = 0;
-		WRE_M = 1;
-		D_out_M = 64'd2;
-		rs_data_M = 64'd0;
-		ALU_result_M = 64'd1;
-		Offset_M = 64'd1;
-		rt_M = 5'd3;
-
-		@(posedge clk);
-
-		@(posedge clk);
-		$stop;
-
-	end
-      
-endmodule
-```
 
 * Waveform
 
-![屏幕截图 2025-03-01 202316](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 202316.png)
+## Extra: Github Link
 
-![屏幕截图 2025-03-01 202319](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 202319.png)
-
-## 4. 5-Stage Pipeline Generated
-
-### 4.1 Schematic
-
-
-
-### 4.2 Verilog
-
-```verilog
-////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 1995-2008 Xilinx, Inc.  All rights reserved.
-////////////////////////////////////////////////////////////////////////////////
-//   ____  ____ 
-//  /   /\/   / 
-// /___/  \  /    Vendor: Xilinx 
-// \   \   \/     Version : 10.1
-//  \   \         Application : sch2verilog
-//  /   /         Filename : Pipeline.vf
-// /___/   /\     Timestamp : 03/01/2025 22:50:30
-// \   \  /  \ 
-//  \___\/\___\ 
-//
-//Command: C:\Xilinx\10.1\ISE\bin\nt\unwrapped\sch2verilog.exe -intstyle ise -family virtex2p -w "E:/Documents and Settings/student/EE533_Lab7/Pipeline.sch" Pipeline.vf
-//Design Name: Pipeline
-//Device: virtex2p
-//Purpose:
-//    This verilog netlist is translated from an ECS schematic.It can be 
-//    synthesized and simulated, but it should not be modified. 
-//
-`timescale 1ns / 1ps
-
-module Pipeline(clk, 
-                Instr_IN, 
-                Instr_W_en, 
-                I_W_Addr, 
-                rst);
-
-    input clk;
-    input [31:0] Instr_IN;
-    input Instr_W_en;
-    input [8:0] I_W_Addr;
-    input rst;
-   
-   wire ADDI_EX;
-   wire ADDI_ID;
-   wire ADDI_M;
-   wire ADDI_WB;
-   wire [63:0] ALU_B;
-   wire [3:0] ALU_OP_EX;
-   wire [3:0] ALU_OP_ID;
-   wire [63:0] ALU_result_EX;
-   wire [63:0] ALU_result_M;
-   wire [63:0] ALU_result_WB;
-   wire BEQ_ID;
-   wire BGT_ID;
-   wire BLT_ID;
-   wire [63:0] D_out_WB;
-   wire [31:0] Instruction;
-   wire J_ID;
-   wire LW_EX;
-   wire LW_ID;
-   wire LW_M;
-   wire LW_WB;
-   wire MOVI_EX;
-   wire MOVI_ID;
-   wire MOVI_M;
-   wire MOVI_WB;
-   wire NOOP_EX;
-   wire NOOP_ID;
-   wire NOOP_M;
-   wire [15:0] Offset;
-   wire [63:0] Offset_EX;
-   wire [63:0] Offset_ID;
-   wire [63:0] Offset_M;
-   wire [63:0] Offset_WB;
-   wire [63:0] ONE;
-   wire [5:0] OP_CODE_ID;
-   wire [63:0] PC;
-   wire [63:0] PC_next;
-   wire [63:0] PC_plus_one;
-   wire [63:0] RF_WB_Din;
-   wire [63:0] rs_data_EX;
-   wire [63:0] rs_data_ID;
-   wire [63:0] rs_data_M;
-   wire [4:0] rs_ID;
-   wire [63:0] rt_data_EX;
-   wire [63:0] rt_data_ID;
-   wire [63:0] rt_data_M;
-   wire [4:0] rt_EX;
-   wire [4:0] rt_ID;
-   wire SW_EX;
-   wire SW_ID;
-   wire SW_M;
-   wire WME_EX;
-   wire WME_ID;
-   wire WME_M;
-   wire WRE_EX;
-   wire WRE_ID;
-   wire WRE_M;
-   wire WRE_WB;
-   wire XLXN_22;
-   wire [4:0] XLXN_93;
-   wire [7:0] XLXN_96;
-   wire [63:0] XLXN_100;
-   wire [2:0] XLXN_114;
-   
-   PC XLXI_1 (.clk(clk), 
-              .PC_next(PC_next[63:0]), 
-              .rst(rst), 
-              .PC(PC[63:0]));
-   PC_MUX XLXI_3 (.BTA(Offset_ID[63:0]), 
-                  .PC_ctrl(XLXN_22), 
-                  .PC_next_in(PC_plus_one[63:0]), 
-                  .PC_next_out(PC_next[63:0]));
-   I_MEM XLXI_4 (.addra(PC[8:0]), 
-                 .addrb(I_W_Addr[8:0]), 
-                 .clka(clk), 
-                 .clkb(clk), 
-                 .dinb(Instr_IN[31:0]), 
-                 .web(Instr_W_en), 
-                 .douta(Instruction[31:0]));
-   IF_ID_Reg XLXI_5 (.Instruction(Instruction[31:0]), 
-                     .Offset_ID(Offset[15:0]), 
-                     .OP_CODE_ID(OP_CODE_ID[5:0]), 
-                     .rs_ID(rs_ID[4:0]), 
-                     .rt_ID(rt_ID[4:0]));
-   RF XLXI_6 (.clk(clk), 
-              .rst(rst), 
-              .r0addr(rs_ID[2:0]), 
-              .r1addr(rt_ID[2:0]), 
-              .waddr(XLXN_114[2:0]), 
-              .wdata(RF_WB_Din[63:0]), 
-              .wena(WRE_WB), 
-              .r0data(rs_data_ID[63:0]), 
-              .r1data(rt_data_ID[63:0]));
-   Control_Unit XLXI_7 (.OP_CODE(OP_CODE_ID[5:0]), 
-                        .ADDI_ID(ADDI_ID), 
-                        .ALU_OP_ID(ALU_OP_ID[3:0]), 
-                        .BEQ_ID(BEQ_ID), 
-                        .BGT_ID(BGT_ID), 
-                        .BLT_ID(BLT_ID), 
-                        .J_ID(J_ID), 
-                        .LW_ID(LW_ID), 
-                        .MOVI_ID(MOVI_ID), 
-                        .NOOP_ID(NOOP_ID), 
-                        .SW_ID(SW_ID), 
-                        .WME_ID(WME_ID), 
-                        .WRE_ID(WRE_ID));
-   Offset_Extend XLXI_9 (.Offset(Offset[15:0]), 
-                         .Offset_ID(Offset_ID[63:0]));
-   ID_EX_Reg XLXI_10 (.ADDI_ID(ADDI_ID), 
-                      .ALU_OP_ID(ALU_OP_ID[3:0]), 
-                      .clk(clk), 
-                      .LW_ID(LW_ID), 
-                      .MOVI_ID(MOVI_ID), 
-                      .NOOP_ID(NOOP_ID), 
-                      .Offset_ID(Offset_ID[63:0]), 
-                      .rst(rst), 
-                      .rs_data_ID(rs_data_ID[63:0]), 
-                      .rt_data_ID(rt_data_ID[63:0]), 
-                      .rt_ID(rt_ID[4:0]), 
-                      .SW_ID(SW_ID), 
-                      .WME_ID(WME_ID), 
-                      .WRE_ID(WRE_ID), 
-                      .ADDI_EX(ADDI_EX), 
-                      .ALU_OP_EX(ALU_OP_EX[3:0]), 
-                      .LW_EX(LW_EX), 
-                      .MOVI_EX(MOVI_EX), 
-                      .NOOP_EX(NOOP_EX), 
-                      .Offset_EX(Offset_EX[63:0]), 
-                      .rs_data_EX(rs_data_EX[63:0]), 
-                      .rt_data_EX(rt_data_EX[63:0]), 
-                      .rt_EX(rt_EX[4:0]), 
-                      .SW_EX(SW_EX), 
-                      .WME_EX(WME_EX), 
-                      .WRE_EX(WRE_EX));
-   ALU XLXI_11 (.A(rs_data_EX[63:0]), 
-                .ALU_OP(ALU_OP_EX[3:0]), 
-                .B(ALU_B[63:0]), 
-                .ALU_Out(ALU_result_EX[63:0]), 
-                .Overflow(), 
-                .Zero_Flag());
-   ALU_src_MUX XLXI_12 (.ADDI_EX(ADDI_EX), 
-                        .LW_EX(LW_EX), 
-                        .Offset_EX(Offset_EX[63:0]), 
-                        .rt_data(rt_data_EX[63:0]), 
-                        .SW_EX(SW_EX), 
-                        .ALU_B(ALU_B[63:0]));
-   EX_M_Reg XLXI_13 (.ADDI_EX(ADDI_EX), 
-                     .ALU_result_EX(ALU_result_EX[63:0]), 
-                     .clk(clk), 
-                     .LW_EX(LW_EX), 
-                     .MOVI_EX(MOVI_EX), 
-                     .NOOP_EX(NOOP_EX), 
-                     .Offset_EX(Offset_EX[63:0]), 
-                     .rst(rst), 
-                     .rs_data_EX(rs_data_EX[63:0]), 
-                     .rt_data_EX(rt_data_EX[63:0]), 
-                     .rt_EX(rt_EX[4:0]), 
-                     .SW_EX(SW_EX), 
-                     .WME_EX(WME_EX), 
-                     .WRE_EX(WRE_EX), 
-                     .ADDI_M(ADDI_M), 
-                     .ALU_result_M(ALU_result_M[63:0]), 
-                     .LW_M(LW_M), 
-                     .MOVI_M(MOVI_M), 
-                     .NOOP_M(NOOP_M), 
-                     .Offset_M(Offset_M[63:0]), 
-                     .rs_data_M(rs_data_M[63:0]), 
-                     .rt_data_M(rt_data_M[63:0]), 
-                     .rt_M(XLXN_93[4:0]), 
-                     .SW_M(SW_M), 
-                     .WME_M(WME_M), 
-                     .WRE_M(WRE_M));
-   D_addr_src_MUX XLXI_14 (.ALU_result_M(ALU_result_M[63:0]), 
-                           .rt_M(XLXN_93[4:0]), 
-                           .SW_M(SW_M), 
-                           .D_addr(XLXN_96[7:0]));
-   D_MEM XLXI_15 (.addra(XLXN_96[7:0]), 
-                  .addrb(XLXN_96[7:0]), 
-                  .clka(clk), 
-                  .clkb(clk), 
-                  .dina(rt_data_M[63:0]), 
-                  .wea(WME_M), 
-                  .doutb(XLXN_100[63:0]));
-   M_WB_Reg XLXI_16 (.ADDI_M(ADDI_M), 
-                     .ALU_result_M(ALU_result_M[63:0]), 
-                     .clk(clk), 
-                     .D_out_M(XLXN_100[63:0]), 
-                     .LW_M(LW_M), 
-                     .MOVI_M(MOVI_M), 
-                     .NOOP_M(NOOP_M), 
-                     .Offset_M(Offset_M[63:0]), 
-                     .rst(rst), 
-                     .rs_data_M(rs_data_M[63:0]), 
-                     .rt_M(XLXN_93[4:0]), 
-                     .SW_M(SW_M), 
-                     .WRE_M(WRE_M), 
-                     .ADDI_WB(ADDI_WB), 
-                     .ALU_result_WB(ALU_result_WB[63:0]), 
-                     .D_out_WB(D_out_WB[63:0]), 
-                     .LW_WB(LW_WB), 
-                     .MOVI_WB(MOVI_WB), 
-                     .NOOP_WB(), 
-                     .Offset_WB(Offset_WB[63:0]), 
-                     .rs_data_WB(), 
-                     .rt_WB(XLXN_114[2:0]), 
-                     .SW_WB(), 
-                     .WRE_WB(WRE_WB));
-   RF_WB_data_src_MUX XLXI_17 (.ADDI_WB(ADDI_WB), 
-                               .ALU_out_WB(ALU_result_WB[63:0]), 
-                               .D_out_WB(D_out_WB[63:0]), 
-                               .LW_WB(LW_WB), 
-                               .MOVI_WB(MOVI_WB), 
-                               .Offset_WB(Offset_WB[63:0]), 
-                               .RF_WB_Din(RF_WB_Din[63:0]));
-   PC_plus_1 XLXI_18 (.ONE(ONE[63:0]), 
-                      .PC(PC[63:0]), 
-                      .PC_next(PC_plus_one[63:0]));
-   VCC XLXI_19 (.P(ONE[0]));
-   Branch_Detection_Unit XLXI_21 (.BEQ_ID(BEQ_ID), 
-                                  .BGT_ID(BGT_ID), 
-                                  .BLT_ID(BLT_ID), 
-                                  .J_ID(J_ID), 
-                                  .rs_data(rs_data_ID[63:0]), 
-                                  .rt_data(rt_data_ID[63:0]), 
-                                  .PC_ctrl(XLXN_22));
-endmodule
-```
-
-### 4.3 Testbench
-
-```verilog
-`timescale 1ns / 1ps
-
-////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer:
-//
-// Create Date:   23:28:48 03/01/2025
-// Design Name:   Pipeline
-// Module Name:   E:/Documents and Settings/student/EE533_Lab7/EE533_Lab_7/Pipeline_tb.v
-// Project Name:  EE533_Lab_7
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: Pipeline
-//
-// Dependencies:
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-////////////////////////////////////////////////////////////////////////////////
-
-module Pipeline_tb;
-
-	// Inputs
-	reg clk;
-	reg [31:0] Instr_IN;
-	reg Instr_W_en;
-	reg [8:0] I_W_Addr;
-	reg rst;
-
-	// Outputs
-	wire ADDI_EX;
-	wire ADDI_ID;
-	wire ADDI_M;
-	wire ADDI_WB;
-	wire [63:0] ALU_B;
-	wire [3:0] ALU_OP_EX;
-	wire [3:0] ALU_OP_ID;
-	wire [63:0] ALU_result_EX;
-	wire [63:0] ALU_result_M;
-	wire [63:0] ALU_result_WB;
-	wire BEQ_ID;
-	wire BGT_ID;
-	wire BLT_ID;
-	wire [7:0] D_MEM_addr;
-	wire [63:0] D_out_M;
-	wire [63:0] D_out_WB;
-	wire [31:0] Instruction;
-	wire J_ID;
-	wire LW_EX;
-	wire LW_ID;
-	wire LW_M;
-	wire LW_WB;
-	wire MOVI_EX;
-	wire MOVI_ID;
-	wire MOVI_M;
-	wire MOVI_WB;
-	wire NOOP_EX;
-	wire NOOP_ID;
-	wire NOOP_M;
-	wire NOOP_WB;
-	wire [63:0] Offset_EX;
-	wire [63:0] Offset_ID;
-	wire [63:0] Offset_M;
-	wire [63:0] Offset_WB;
-	wire [5:0] OP_CODE_ID;
-	wire [63:0] PC;
-	wire PC_ctrl;
-	wire [63:0] PC_next;
-	wire [63:0] PC_plus_one;
-	wire [63:0] RF_WB_Din;
-	wire [63:0] rs_data_EX;
-	wire [63:0] rs_data_ID;
-	wire [63:0] rs_data_M;
-	wire [63:0] rs_data_WB;
-	wire [4:0] rs_ID;
-	wire [63:0] rt_data_EX;
-	wire [63:0] rt_data_ID;
-	wire [63:0] rt_data_M;
-	wire [4:0] rt_EX;
-	wire [4:0] rt_ID;
-	wire [4:0] rt_M;
-	wire [2:0] rt_WB;
-	wire SW_EX;
-	wire SW_ID;
-	wire SW_M;
-	wire SW_WB;
-	wire WME_EX;
-	wire WME_ID;
-	wire WME_M;
-	wire WRE_EX;
-	wire WRE_ID;
-	wire WRE_M;
-	wire WRE_WB;
-
-	// Instantiate the Unit Under Test (UUT)
-	Pipeline uut (
-		.clk(clk), 
-		.Instr_IN(Instr_IN), 
-		.Instr_W_en(Instr_W_en), 
-		.I_W_Addr(I_W_Addr), 
-		.rst(rst), 
-		.ADDI_EX(ADDI_EX), 
-		.ADDI_ID(ADDI_ID), 
-		.ADDI_M(ADDI_M), 
-		.ADDI_WB(ADDI_WB), 
-		.ALU_B(ALU_B), 
-		.ALU_OP_EX(ALU_OP_EX), 
-		.ALU_OP_ID(ALU_OP_ID), 
-		.ALU_result_EX(ALU_result_EX), 
-		.ALU_result_M(ALU_result_M), 
-		.ALU_result_WB(ALU_result_WB), 
-		.BEQ_ID(BEQ_ID), 
-		.BGT_ID(BGT_ID), 
-		.BLT_ID(BLT_ID), 
-		.D_MEM_addr(D_MEM_addr), 
-		.D_out_M(D_out_M), 
-		.D_out_WB(D_out_WB), 
-		.Instruction(Instruction), 
-		.J_ID(J_ID), 
-		.LW_EX(LW_EX), 
-		.LW_ID(LW_ID), 
-		.LW_M(LW_M), 
-		.LW_WB(LW_WB), 
-		.MOVI_EX(MOVI_EX), 
-		.MOVI_ID(MOVI_ID), 
-		.MOVI_M(MOVI_M), 
-		.MOVI_WB(MOVI_WB), 
-		.NOOP_EX(NOOP_EX), 
-		.NOOP_ID(NOOP_ID), 
-		.NOOP_M(NOOP_M), 
-		.NOOP_WB(NOOP_WB), 
-		.Offset_EX(Offset_EX), 
-		.Offset_ID(Offset_ID), 
-		.Offset_M(Offset_M), 
-		.Offset_WB(Offset_WB), 
-		.OP_CODE_ID(OP_CODE_ID), 
-		.PC(PC), 
-		.PC_ctrl(PC_ctrl), 
-		.PC_next(PC_next), 
-		.PC_plus_one(PC_plus_one), 
-		.RF_WB_Din(RF_WB_Din), 
-		.rs_data_EX(rs_data_EX), 
-		.rs_data_ID(rs_data_ID), 
-		.rs_data_M(rs_data_M), 
-		.rs_data_WB(rs_data_WB), 
-		.rs_ID(rs_ID), 
-		.rt_data_EX(rt_data_EX), 
-		.rt_data_ID(rt_data_ID), 
-		.rt_data_M(rt_data_M), 
-		.rt_EX(rt_EX), 
-		.rt_ID(rt_ID), 
-		.rt_M(rt_M), 
-		.rt_WB(rt_WB), 
-		.SW_EX(SW_EX), 
-		.SW_ID(SW_ID), 
-		.SW_M(SW_M), 
-		.SW_WB(SW_WB), 
-		.WME_EX(WME_EX), 
-		.WME_ID(WME_ID), 
-		.WME_M(WME_M), 
-		.WRE_EX(WRE_EX), 
-		.WRE_ID(WRE_ID), 
-		.WRE_M(WRE_M), 
-		.WRE_WB(WRE_WB)
-	);
-
-	always #50 clk = ~clk;
-
-	initial begin
-		// Initialize Inputs
-		clk = 0;
-		Instr_IN = 0;
-		Instr_W_en = 0;
-		I_W_Addr = 0;
-		rst = 1;
-
-		// Wait 100 ns for global reset to finish
-		@(posedge clk);
-		rst = 0;
-        
-		// Add stimulus here
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-
-		@(posedge clk);
-		$stop;
-
-	end
-      
-endmodule
-```
+- https://github.com/yuezhenglingluan/USC_EE533_lab7

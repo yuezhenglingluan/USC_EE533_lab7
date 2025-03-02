@@ -28,7 +28,7 @@ module Offset_Extend_tb;
 	reg [15:0] Offset;
 
 	// Outputs
-	wire [31:0] Offset_ID;
+	wire [63:0] Offset_ID;
 
 	// Instantiate the Unit Under Test (UUT)
 	Offset_Extend uut (

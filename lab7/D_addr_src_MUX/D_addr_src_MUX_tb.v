@@ -26,7 +26,7 @@ module D_addr_src_MUX_tb;
 
 	// Inputs
 	reg [63:0] ALU_result_M;
-	reg [63:0] rt_M;
+	reg [4:0] rt_M;
 	reg SW_M;
 
 	// Outputs
@@ -52,12 +52,12 @@ module D_addr_src_MUX_tb;
 		// Add stimulus here
 		#100;
 		ALU_result_M = 64'd1;
-		rt_M = 64'd2;
+		rt_M = 5'd2;
 		SW_M = 0;
 
 		#100;
 		ALU_result_M = 64'd3;
-		rt_M = 64'd4;
+		rt_M = 5'd4;
 		SW_M = 1;
 
 		#100;

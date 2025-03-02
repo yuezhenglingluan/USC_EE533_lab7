@@ -105,11 +105,11 @@ module ID_EX_Reg_tb;
 
 		// Wait 100 ns for global reset to finish
 		#100;
+		rst = 0;
         
 		// Add stimulus here
-		#100;
-		rst = 0;
-		ALU_OP_ID = 4'd1;
+		@(posedge clk);
+		ALU_OP_ID = 4'd0;
 		NOOP_ID = 0;
 		ADDI_ID = 0;
 		MOVI_ID = 1;
@@ -122,6 +122,78 @@ module ID_EX_Reg_tb;
 		rt_ID = 5'd1;
 		Offset_ID = 16'd9;
 
+		@(posedge clk);
+		ALU_OP_ID = 4'd0;
+		NOOP_ID = 1;
+		ADDI_ID = 0;
+		MOVI_ID = 0;
+		LW_ID = 0;
+		SW_ID = 0;
+		WME_ID = 0;
+		WRE_ID = 0;
+		rs_data_ID = 0;
+		rt_data_ID = 0;
+		rt_ID = 5'd0;
+		Offset_ID = 16'd0;
+
+		@(posedge clk);
+		ALU_OP_ID = 4'd0;
+		NOOP_ID = 1;
+		ADDI_ID = 0;
+		MOVI_ID = 0;
+		LW_ID = 0;
+		SW_ID = 0;
+		WME_ID = 0;
+		WRE_ID = 0;
+		rs_data_ID = 0;
+		rt_data_ID = 0;
+		rt_ID = 5'd0;
+		Offset_ID = 16'd0;
+
+		@(posedge clk);
+		ALU_OP_ID = 4'd1;
+		NOOP_ID = 0;
+		ADDI_ID = 0;
+		MOVI_ID = 0;
+		LW_ID = 0;
+		SW_ID = 0;
+		WME_ID = 0;
+		WRE_ID = 0;
+		rs_data_ID = 0;
+		rt_data_ID = 0;
+		rt_ID = 5'd0;
+		Offset_ID = 16'd0;
+
+		@(posedge clk);
+		ALU_OP_ID = 4'd0;
+		NOOP_ID = 1;
+		ADDI_ID = 0;
+		MOVI_ID = 0;
+		LW_ID = 0;
+		SW_ID = 0;
+		WME_ID = 0;
+		WRE_ID = 0;
+		rs_data_ID = 0;
+		rt_data_ID = 0;
+		rt_ID = 5'd0;
+		Offset_ID = 16'd0;
+
+		@(posedge clk);
+		ALU_OP_ID = 4'd0;
+		NOOP_ID = 0;
+		ADDI_ID = 1;
+		MOVI_ID = 0;
+		LW_ID = 0;
+		SW_ID = 0;
+		WME_ID = 0;
+		WRE_ID = 1;
+		rs_data_ID = 0;
+		rt_data_ID = 0;
+		rt_ID = 5'd3;
+		Offset_ID = 16'd1;
+
+		@(posedge clk);
+		$stop;
 
 	end
       
