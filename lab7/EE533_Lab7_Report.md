@@ -220,7 +220,7 @@ main:
 
 ## 2. Pipelined Processor on NetFPGA
 
-### 2.1 Instruction Generated
+### 2.1 ARM Instruction Generated
 
 ```
 .data
@@ -290,374 +290,1725 @@ end:
 #18 b end                 @ end
 ```
 
-### 2.2 Instruction Format
+### 2.2 MIPS Instruction Format
 
-#### 2.2.1 Data Processing Type
+#### 2.2.1 Pesudo Instruction
 
-| Instr# |       Instr       | OP Code [31:26] | Immediate/Offset [25:24] | rs [23:20] | rt [19:16] | rd [15:12] | Offset [11:0] |
-| :----: | :---------------: | :-------------: | :----------------------: | :--------: | :--------: | :--------: | :-----------: |
-|   3    |  sub r5, r5, #1   |     000001      |            10            |    0101    |    0101    |    0001    |               |
-|   6    |  lsl r8, r8, #2   |     000011      |            10            |    1000    |    1000    |    0010    |               |
-|   7    |  add r9, r4, r8   |     000000      |            00            |    1001    |    0100    |    1000    |               |
-|   10   | sub r12, r10, r11 |     000001      |            00            |    1100    |    1010    |    1011    |               |
-|   14   |  add r6, r6, #1   |     000000      |            10            |    0110    |    0110    |    0001    |               |
-|   15   |  sub r7, r6, r5   |     000001      |            00            |    0111    |    0110    |    0101    |               |
+```
+lw r0, array_addr
+lw r1, array_size
+subi r1, r1, #1
+mov r2, #0
+outer_loop:
+beq r2, r1, end
+addi r3, r2, #1
+inner_loop:
+bgt r3, r1, next_out
+lw r4, r0(r2)
+lw r5, r0(r3)
+blt r4, r5, no_swap
+sw r4, r0(r3)
+sw r5, r0(r2)
+no_swap:
+addi r3, r3, #1
+j inner_loop
+next_out:
+addi r2, r2, #1
+j outer_loop
+end:
+j end
+```
 
+#### 2.2.2 Real MIPS Instruction
 
+* With manually introduced NOOP, we can avoid data dependency problem and early branch flush problem.
 
-#### 2.2.2 Move Type
+```
+movi r1, #9
+outer_loop:
+noop
+noop
+beq r2, r1, end
+noop
+addi r3, r2, #1
+inner_loop:
+noop
+noop
+bgt r3, r1, next_out
+noop
+lw r4, r2(#0)
+lw r5, r3(#0)
+noop
+noop
+blt r4, r5, no_swap
+noop
+sw r4, r3(#0)
+sw r5, r2(#0)
+no_swap:
+addi r3, r3, #1
+j inner_loop
+noop
+next_out:
+addi r2, r2, #1
+j outer_loop
+noop
+end:
+j end
+```
 
-| Instr# |       Instr       | OP Code [31:26] | Immediate/Offset [25:24] | Des Reg [23:20] | Sr Reg1 [19:16] | Sr Reg2 [15:12] | Offset [11:0] |
-| :----: | :---------------: | :-------------: | :----------------------: | :-------------: | :-------------: | :-------------: | :-----------: |
-|   4    |    mov r6, #0     |     000010      |            10            |      0110       |                 |                 |               |
-|   5    |    mov r8, r6     |     000010      |            00            |      1000       |      0110       |                 |               |
+* Instruction OP Code
 
-#### 2.2.3 Load/Store Type
-
-| Instr# | Instr | OP Code [31:26] | Des Reg [25:21] | Sr Reg1[20:16] | Sr Reg2[15:0] | Offset[10:0] |
-| :----: | :---: | :-------------: | :-------------: | :------------: | :-----------: | :----------: |
-|        |  ldr  |     000100      |                 |                |               |              |
-|        |  str  |     000101      |                 |                |               |              |
-
-#### 2.2.3 Branch Type
-
-
-
-
-* OP Code Definition
-
-| Instr Label | OP Code |
-| :---------: | :-----: |
-|     add     | 000000  |
-|     sub     | 000001  |
-|     mov     | 000010  |
-|     lsl     | 000011  |
-|     ldr     | 000100  |
-|     str     | 000101  |
-|      b      | 000110  |
-|     bge     | 000111  |
-|     ble     | 001000  |
-
-
-
+| Instr | OP Code [31:26] |
+| :---: | :-------------: |
+| noop  |     000000      |
+| addi  |     000001      |
+| movi  |     000010      |
+|  lw   |     000011      |
+|  sw   |     000100      |
+|  beq  |     000101      |
+|  bgt  |     000110      |
+|  blt  |     000111      |
+|   j   |     001000      |
 
 * Instruction Table
 
-| Instr# | Instr | OP Code | Des Reg | Sr Reg1 | Sr Reg2 | Offset |
-| :----: | :---: | :-----: | :-----: | :-----: | :-----: | :----: |
-|   0    |  ldr  | 000100  |   r4    | =array  |         |        |
-|   1    |  ldr  | 000100  |   r5    |   =N    |         |        |
-|   2    |  ldr  | 000100  |   r5    |   r5    |         |        |
-|   3    |  sub  | 000001  |   r5    |   r5    |   #1    |        |
-|   4    |  mov  | 000010  |   r6    |         |         |   #0   |
-|   5    |  mov  | 000010  |   r8    |   r6    |         |        |
-|   6    |  lsl  | 000011  |   r8    |   r8    |         |   #2   |
-|   7    |  add  | 000110  |   r9    |   r4    |   r8    |        |
-|   8    |  ldr  | 000100  |   r10   |   r9    |         |        |
-|   9    |  ldr  | 000100  |   r11   |   r9    |         |   #8   |
-|   10   |  sub  | 000001  |   r12   |   r10   |   r11   |        |
-|   11   |  ble  | 001000  |         |         |         |        |
-|   12   |  str  | 000101  |   r11   |   r9    |         |        |
-|   13   |  str  | 000101  |   r10   |   r9    |         |   #8   |
-|   14   |  add  | 000000  |   r6    |   r6    |         |   #1   |
-|   15   |  sub  | 000001  |   r7    |   r6    |   r5    |        |
-|   16   |  bge  | 000111  |         |         |         |        |
-|   17   |   b   | 000110  |         |         |         |        |
-|   18   |   b   | 000110  |         |         |         |        |
+| Addr |   Label    |        Instr         | OP Code [31:26] | Rs [25:21] | Rt [20:16] | Offset [15:0] |
+| :--: | :--------: | :------------------: | :-------------: | :--------: | :--------: | :-----------: |
+|  0   |            |     movi r1, #9      |     000010      |    5'd0    |    5'd1    |     16'd9     |
+|  1   | outer_loop |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  2   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  3   |            |   beq r2, r1, end    |     000101      |    5'd1    |    5'd2    |    16'd24     |
+|  4   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  5   |            |   addi r3, r2, #1    |     000001      |    5'd2    |    5'd3    |     16'd1     |
+|  6   | inner_loop |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  7   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  8   |            | bgt r3, r1, next_out |     000110      |    5'd1    |    5'd3    |    16'd21     |
+|  9   |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  10  |            |    lw r4, r2(#0)     |     000011      |    5'd2    |    5'd4    |     16'd0     |
+|  11  |            |    lw r5, r3(#0)     |     000011      |    5'd3    |    5'd5    |     16'd0     |
+|  12  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  13  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  14  |            | blt r4, r5, no_swap  |     000111      |    5'd5    |    5'd4    |    16'd18     |
+|  15  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  16  |            |    sw r4, r3(#0)     |     000100      |    5'd3    |    5'd4    |     16'd0     |
+|  17  |            |    sw r5, r2(#0)     |     000100      |    5'd2    |    5'd5    |     16'd0     |
+|  18  |  no_swap   |   addi r3, r3, #1    |     000001      |    5'd3    |    5'd3    |     16'd1     |
+|  19  |            |     j inner_loop     |     001000      |    5'd0    |    5'd0    |     16'd6     |
+|  20  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  21  |  next_out  |   addi r2, r2, #1    |     000001      |    5'd2    |    5'd2    |     16'd1     |
+|  22  |            |     j outer_loop     |     001000      |    5'd0    |    5'd0    |     16'd1     |
+|  23  |            |         noop         |     000000      |    5'd0    |    5'd0    |     16'd0     |
+|  24  |    end     |        j end         |     001000      |    5'd0    |    5'd0    |    16'd24     |
 
+## 3. 5-Stage Pipeline Elements
 
+### 3.1 IF Stage
 
+#### 3.1.1 PC
 
+* Verilog
 
-```
-04 80 10 00  # ldr r4, =array
-05 80 20 00  # ldr r5, =N
-0A 54 00 00  # ldr r5, [r5]
-0B 54 00 01  # sub r5, r5, #1
-04 60 00 00  # mov r6, #0
-05 68 00 03  # mov r8, r6, LSL #3
-06 94 00 00  # add r9, r4, r8
-0A A9 00 00  # ldr r10, [r9]
-0A B9 00 08  # ldr r11, [r9, #8]
-0B C5 A9 00  # sub r12, r10, r11
-08 C0 00 20  # ble no_swap
-0F B9 00 00  # str r11, [r9]
-0F A9 00 08  # str r10, [r9, #8]
-04 66 00 01  # add r6, r6, #1
-09 00 00 40  # b inner_loop
-```
+```verilog
+`timescale 1ns / 1ps
 
+module PC
+(
+    input clk,
+    input rst,
+    input [63:0] PC_next,
 
+    output reg [63:0] PC
+);
 
-#### 2.1.1 Data Processing Instruction
+    always @(posedge clk) begin
+        if (rst)
+            PC <= 64'b0;
+        else
+            PC <= PC_next;
+    end
 
-* Instruction Format definition
-
-| Condition |   00    |  I   | Opcode  |  S   |   Rn    |   Rd    | Opprand |
-| :-------: | :-----: | :--: | :-----: | :--: | :-----: | :-----: | :-----: |
-|  31 - 28  | 27 - 26 |  25  | 24 - 21 |  20  | 19 - 16 | 15 - 12 | 11 - 0  |
-
-* Condition: Condition Flag
-* 00: For Data Processing, Instr[27:26] == 00
-* I: Immediate Offset
-  * 1 = immediate offset
-  * 0 = register offset
-* Opcode: ALU_OP code
-* S: Set condition flag if S = 1
-* Rn: 1st Register addr
-* Rd: 2nd Register addr
-* Operand: Second operand
-  * immediate value or register with shift
-
-* ALU_OP Table
-
-| Type | Opcode |    Description     |
-| :--: | :----: | :----------------: |
-| ADD  |  0100  |        Add         |
-| SUB  |  0010  |      Subtract      |
-| MOV  |  1101  |        Move        |
-| CMP  |  1010  |      Compare       |
-| LSL  |  1101  | Logical Left Shift |
-
-#### 2.1.2 LDR/STR Instruction
-
-* Instruction Format definition
-
-| Condition |   01    |  I   |  P   |  U   |  B   |  W   |  L   |   Rn    |   Rd    | Offset |
-| :-------: | :-----: | :--: | :--: | :--: | :--: | :--: | :--: | :-----: | :-----: | :----: |
-|  31 - 28  | 27 - 26 |  25  |  24  |  23  |  22  |  21  |  20  | 19 - 16 | 15 - 12 | 11 - 0 |
-
-* Condition: Condition Flags
-* Opcode: 01 indicates Load/Store operation
-* I: Immediate flag
-  * 1 = immediate offset
-  * 0 = register offset
-* P: Pre/Post Indexing
-  * 1 = Pre
-  * 0 = Post
-* U: Up/Down
-  * 1 = Add offset
-  * 0 = Subtract offset
-* B: Byte/Word
-  * 1 = Byte
-  * 0 = Word
-* W: Write back to base register
-  * 1 = update Rn after access
-* L: Load/Store Flag
-  * 1 = Load
-  * 0 = Store
-* Rn: First Register addr
-* Rd: Second Register addr
-* Offset: Offset
-
-* LDR:
-  * 1110, 0101, 1001, 1111, 0011, 0001, 0000, 0100
-  * LDR R3, [PC, #4]
-  * Condition: 1110
-  * 01: 01
-  * I: 0
-  * P: 1
-  * U: 1
-  * B: 0
-  * W: 0
-  * L: 1
-  * Rn: 1111
-  * Rd: 0011
-  * Offset: 000100000100
-
-| Condition |  01  |  I   |  P   |  U   | B    |  W   |  L   |  Rn  |  Rd  |    Offset    |
-| :-------: | :--: | :--: | :--: | :--: | ---- | :--: | :--: | :--: | :--: | :----------: |
-|   1110    |  01  |  0   |  1   |  1   | 0    |  0   |  1   | 1111 | 0011 | 000100000100 |
-
-
-
-* STR:
-  * 1110, 0101, 0000, 1011, 0011, 0000, 0000, 1100
-  * STR R3, [FP, #-12]
-
-#### 2.1.3 LDM/STM Instruction
-
-* Instruction Format definition
-
-| Condition |   100   |  P   |  U   |  S   |  W   |  L   |   Rn    | Register List |
-| :-------: | :-----: | :--: | :--: | :--: | :--: | :--: | :-----: | :-----------: |
-|  31 - 28  | 27 - 25 |  24  |  23  |  22  |  21  |  20  | 19 - 16 |    15 - 0     |
-
-* LDM:
-  * 1110, 1000, 1011, 1110, 0000, 0000, 0000, 1111
-* STM:
-  * 1110, 1000, 1000, 1100, 0000, 0000, 0000, 0011
-
-### 2.2 Generated binary code
-
-* I_MEM.mif
-
-```
-e92d4800
-e28db004
-e24dd038
-e59f3104
-e24bc038
-e1a0e003
-e8be000f
-e8ac000f
-e8be000f
-e8ac000f
-e89e0003
-e88c0003
-e3a03000
-e50b3008
-ea00002e
-e51b3008
-e2833001
-e50b300c
-ea000024
-e51b300c
-e1a03103
-e2433004
-e083300b
-e5132034
-e51b3008
-e1a03103
-e2433004
-e083300b
-e5133034
-e1520003
-aa000015
-e51b300c
-e1a03103
-e2433004
-e083300b
-e5133034
-e50b3010
-e51b3008
-e1a03103
-e2433004
-e083300b
-e5132034
-e51b300c
-e1a03103
-e2433004
-e083300b
-e5032034
-e51b3008
-e1a03103
-e2433004
-e083300b
-e51b2010
-e5032034
-e51b300c
-e2833001
-e50b300c
-e51b300c
-e3530009
-daffffd7
-e51b3008
-e2833001
-e50b3008
-e51b3008
-e3530009
-daffffcd
-e3a03000
-e1a00003
-e24bd004
-e8bd4800
-e12fff1e
-0000011c
-00000143
-0000007b
-fffffe39
-00000002
-00000062
-0000007d
-0000000a
-00000041
-ffffffc8
-00000000
+endmodule
 ```
 
-* 
+* Testbench
 
-|   Hex    |              Binary              | Condition | Opcode |  Rn  |  Rd  |    Operand     |
-| :------: | :------------------------------: | :-------: | :----: | :--: | :--: | :------------: |
-| e92d4800 | 11101001001011010100100000000000 |   1110    | 100100 | 1011 | 101  |  100000000000  |
-| e28db004 | 11100010100011011011000000000100 |   1110    |  1010  |  11  | 110  | 11000000000100 |
-| e24dd038 | 11100010010011011101000000111000 |   1110    |  1001  |  11  | 111  | 1000000111000  |
-| e59f3104 | 11100101100111110011000100000100 |   1110    | 10110  | 111  | 1100 | 11000100000100 |
-| e24bc038 | 11100010010010111100000000111000 |   1110    |  1001  |  10  | 1111 |     111000     |
-| e1a0e003 | 11100001101000001110000000000011 |   1110    |  110   | 1000 |  11  | 10000000000011 |
-| e8be000f | 11101000101111100000000000001111 |   1110    | 100010 | 1111 | 1000 |      1111      |
-| e8ac000f | 11101000101011000000000000001111 |   1110    | 100010 | 1011 |  0   |      1111      |
-| e8be000f | 11101000101111100000000000001111 |   1110    | 100010 | 1111 | 1000 |      1111      |
-| e8ac000f | 11101000101011000000000000001111 |   1110    | 100010 | 1011 |  0   |      1111      |
-| e89e0003 | 11101000100111100000000000000011 |   1110    | 100010 | 111  | 1000 |       11       |
-| e88c0003 | 11101000100011000000000000000011 |   1110    | 100010 |  11  |  0   |       11       |
-| e3a03000 | 11100011101000000011000000000000 |   1110    |  1110  | 1000 |  0   | 11000000000000 |
-| e50b3008 | 11100101000010110011000000001000 |   1110    | 10100  |  10  | 1100 | 11000000001000 |
-| ea00002e | 11101010000000000000000000101110 |   1110    | 101000 |  0   |  0   |     101110     |
-| e51b3008 | 11100101000110110011000000001000 |   1110    | 10100  | 110  | 1100 | 11000000001000 |
-| e2833001 | 11100010100000110011000000000001 |   1110    |  1010  |  0   | 1100 | 11000000000001 |
-| e50b300c | 11100101000010110011000000001100 |   1110    | 10100  |  10  | 1100 | 11000000001100 |
-| ea000024 | 11101010000000000000000000100100 |   1110    | 101000 |  0   |  0   |     100100     |
-| e51b300c | 11100101000110110011000000001100 |   1110    | 10100  | 110  | 1100 | 11000000001100 |
-| e1a03103 | 11100001101000000011000100000011 |   1110    |  110   | 1000 |  0   | 11000100000011 |
-| e2433004 | 11100010010000110011000000000100 |   1110    |  1001  |  0   | 1100 | 11000000000100 |
-| e083300b | 11100000100000110011000000001011 |   1110    |   10   |  0   | 1100 | 11000000001011 |
-| e5132034 | 11100101000100110010000000110100 |   1110    | 10100  | 100  | 1100 | 10000000110100 |
-| e51b3008 | 11100101000110110011000000001000 |   1110    | 10100  | 110  | 1100 | 11000000001000 |
-| e1a03103 | 11100001101000000011000100000011 |   1110    |  110   | 1000 |  0   | 11000100000011 |
-| e2433004 | 11100010010000110011000000000100 |   1110    |  1001  |  0   | 1100 | 11000000000100 |
-| e083300b | 11100000100000110011000000001011 |   1110    |   10   |  0   | 1100 | 11000000001011 |
-| e5133034 | 11100101000100110011000000110100 |   1110    | 10100  | 100  | 1100 | 11000000110100 |
-| e1520003 | 11100001010100100000000000000011 |   1110    |  101   | 100  | 1000 |       11       |
-| aa000015 | 10101010000000000000000000010101 |   1010    | 101000 |  0   |  0   |     10101      |
-| e51b300c | 11100101000110110011000000001100 |   1110    | 10100  | 110  | 1100 | 11000000001100 |
-| e1a03103 | 11100001101000000011000100000011 |   1110    |  110   | 1000 |  0   | 11000100000011 |
-| e2433004 | 11100010010000110011000000000100 |   1110    |  1001  |  0   | 1100 | 11000000000100 |
-| e083300b | 11100000100000110011000000001011 |   1110    |   10   |  0   | 1100 | 11000000001011 |
-| e5133034 | 11100101000100110011000000110100 |   1110    | 10100  | 100  | 1100 | 11000000110100 |
-| e50b3010 | 11100101000010110011000000010000 |   1110    | 10100  |  10  | 1100 | 11000000010000 |
-| e51b3008 | 11100101000110110011000000001000 |   1110    | 10100  | 110  | 1100 | 11000000001000 |
-| e1a03103 | 11100001101000000011000100000011 |   1110    |  110   | 1000 |  0   | 11000100000011 |
-| e2433004 | 11100010010000110011000000000100 |   1110    |  1001  |  0   | 1100 | 11000000000100 |
-| e083300b | 11100000100000110011000000001011 |   1110    |   10   |  0   | 1100 | 11000000001011 |
-| e5132034 | 11100101000100110010000000110100 |   1110    | 10100  | 100  | 1100 | 10000000110100 |
-| e51b300c | 11100101000110110011000000001100 |   1110    | 10100  | 110  | 1100 | 11000000001100 |
-| e1a03103 | 11100001101000000011000100000011 |   1110    |  110   | 1000 |  0   | 11000100000011 |
-| e2433004 | 11100010010000110011000000000100 |   1110    |  1001  |  0   | 1100 | 11000000000100 |
-| e083300b | 11100000100000110011000000001011 |   1110    |   10   |  0   | 1100 | 11000000001011 |
-| e5032034 | 11100101000000110010000000110100 |   1110    | 10100  |  0   | 1100 | 10000000110100 |
-| e51b3008 | 11100101000110110011000000001000 |   1110    | 10100  | 110  | 1100 | 11000000001000 |
-| e1a03103 | 11100001101000000011000100000011 |   1110    |  110   | 1000 |  0   | 11000100000011 |
-| e2433004 | 11100010010000110011000000000100 |   1110    |  1001  |  0   | 1100 | 11000000000100 |
-| e083300b | 11100000100000110011000000001011 |   1110    |   10   |  0   | 1100 | 11000000001011 |
-| e51b2010 | 11100101000110110010000000010000 |   1110    | 10100  | 110  | 1100 | 10000000010000 |
-| e5032034 | 11100101000000110010000000110100 |   1110    | 10100  |  0   | 1100 | 10000000110100 |
-| e51b300c | 11100101000110110011000000001100 |   1110    | 10100  | 110  | 1100 | 11000000001100 |
-| e2833001 | 11100010100000110011000000000001 |   1110    |  1010  |  0   | 1100 | 11000000000001 |
-| e50b300c | 11100101000010110011000000001100 |   1110    | 10100  |  10  | 1100 | 11000000001100 |
-| e51b300c | 11100101000110110011000000001100 |   1110    | 10100  | 110  | 1100 | 11000000001100 |
-| e3530009 | 11100011010100110000000000001001 |   1110    |  1101  | 100  | 1100 |      1001      |
-| daffffd7 | 11011010111111111111111111010111 |   1101    | 101011 | 1111 | 1111 | 11111111010111 |
-| e51b3008 | 11100101000110110011000000001000 |   1110    | 10100  | 110  | 1100 | 11000000001000 |
-| e2833001 | 11100010100000110011000000000001 |   1110    |  1010  |  0   | 1100 | 11000000000001 |
-| e50b3008 | 11100101000010110011000000001000 |   1110    | 10100  |  10  | 1100 | 11000000001000 |
-| e51b3008 | 11100101000110110011000000001000 |   1110    | 10100  | 110  | 1100 | 11000000001000 |
-| e3530009 | 11100011010100110000000000001001 |   1110    |  1101  | 100  | 1100 |      1001      |
-| daffffcd | 11011010111111111111111111001101 |   1101    | 101011 | 1111 | 1111 | 11111111001101 |
-| e3a03000 | 11100011101000000011000000000000 |   1110    |  1110  | 1000 |  0   | 11000000000000 |
-| e1a00003 | 11100001101000000000000000000011 |   1110    |  110   | 1000 |  0   |       11       |
-| e24bd004 | 11100010010010111101000000000100 |   1110    |  1001  |  10  | 1111 | 1000000000100  |
-| e8bd4800 | 11101000101111010100100000000000 |   1110    | 100010 | 1111 | 101  |  100000000000  |
-| e12fff1e | 11100001001011111111111100011110 |   1110    |  100   | 1011 | 1111 | 11111100011110 |
-| 0000011c | 00000000000000000000000100011100 |     0     |   0    |  0   |  0   |   100011100    |
-| 00000143 | 00000000000000000000000101000011 |     0     |   0    |  0   |  0   |   101000011    |
-| 0000007b | 00000000000000000000000001111011 |     0     |   0    |  0   |  0   |    1111011     |
-| fffffe39 | 11111111111111111111111000111001 |   1111    | 111111 | 1111 | 1111 | 11111000111001 |
-| 00000002 | 00000000000000000000000000000010 |     0     |   0    |  0   |  0   |       10       |
-| 00000062 | 00000000000000000000000001100010 |     0     |   0    |  0   |  0   |    1100010     |
-| 0000007d | 00000000000000000000000001111101 |     0     |   0    |  0   |  0   |    1111101     |
-| 0000000a | 00000000000000000000000000001010 |     0     |   0    |  0   |  0   |      1010      |
-| 00000041 | 00000000000000000000000001000001 |     0     |   0    |  0   |  0   |    1000001     |
-| ffffffc8 | 11111111111111111111111111001000 |   1111    | 111111 | 1111 | 1111 | 11111111001000 |
-| 00000000 | 00000000000000000000000000000000 |     0     |   0    |  0   |  0   |       0        |
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   15:17:32 03/01/2025
+// Design Name:   PC
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/PC_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: PC
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module PC_tb;
+
+	// Inputs
+	reg clk;
+	reg rst;
+	reg [63:0] PC_next;
+
+	// Outputs
+	wire [63:0] PC;
+
+	// Instantiate the Unit Under Test (UUT)
+	PC uut (
+		.clk(clk), 
+		.rst(rst), 
+		.PC_next(PC_next), 
+		.PC(PC)
+	);
+	
+	always #50 clk = ~clk;
+
+	initial begin
+		// Initialize Inputs
+		clk = 1;
+		rst = 1;
+		PC_next = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        rst = 0;
+        
+		// Add stimulus here
+        @(posedge clk);
+        PC_next = 64'd1;
+
+        @(posedge clk);
+        PC_next = 64'd2;
+
+        @(posedge clk);
+        PC_next = 64'd3;
+        
+        @(posedge clk);
+        PC_next = 64'd4;
+
+		@(posedge clk);
+        $stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 152033](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152033.png)
+
+#### 3.1.2 PC+1
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module PC_plus_1
+(
+    input [63:0] PC,
+    input [63:0] ONE,
+
+    output [63:0] PC_next
+);
+
+    assign PC_next = PC + ONE;
+
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   15:22:37 03/01/2025
+// Design Name:   PC_plus_1
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/PC_plus_1_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: PC_plus_1
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module PC_plus_1_tb;
+
+	// Inputs
+	reg [63:0] PC;
+	reg [63:0] ONE;
+
+	// Outputs
+	wire [63:0] PC_next;
+
+	// Instantiate the Unit Under Test (UUT)
+	PC_plus_1 uut (
+		.PC(PC), 
+		.ONE(ONE), 
+		.PC_next(PC_next)
+	);
+
+	initial begin
+		// Initialize Inputs
+		PC = 0;
+		ONE = 1;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+		#100;
+		PC = 1;
+
+		#100;
+		PC = 2;
+
+		#100;
+		PC = 3;
+
+		#100;
+		$stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 152451](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152451.png)
+
+#### 3.1.3 PC_MUX
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module PC_MUX
+(
+    input [63:0] PC_next_in,
+    input [63:0] BTA,
+    input PC_ctrl,
+
+    output [63:0] PC_next_out
+);
+
+    assign PC_next_out = PC_ctrl == 1? BTA : PC_next_in;
+
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   15:26:36 03/01/2025
+// Design Name:   PC_MUX
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/PC_MUX_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: PC_MUX
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module PC_MUX_tb;
+
+	// Inputs
+	reg [63:0] PC_next_in;
+	reg [63:0] BTA;
+	reg PC_ctrl;
+
+	// Outputs
+	wire [63:0] PC_next_out;
+
+	// Instantiate the Unit Under Test (UUT)
+	PC_MUX uut (
+		.PC_next_in(PC_next_in), 
+		.BTA(BTA), 
+		.PC_ctrl(PC_ctrl), 
+		.PC_next_out(PC_next_out)
+	);
+
+	initial begin
+		// Initialize Inputs
+		PC_next_in = 0;
+		BTA = 0;
+		PC_ctrl = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+		#100;
+		PC_next_in = 1;
+		BTA = 3;
+		PC_ctrl = 0;
+
+		#100;
+		PC_next_in = 1;
+		BTA = 3;
+		PC_ctrl = 1;
+
+		#100;
+		PC_next_in = 6;
+		BTA = 9;
+		PC_ctrl = 0;
+
+		#100;
+		PC_next_in = 2;
+		BTA = 3;
+		PC_ctrl = 1;
+
+		#100;
+		$stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 152852](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 152852.png)
+
+#### 3.1.4 I_MEM
+
+* Verilog
+
+
+
+* Vector File
+
+
+
+* Memory Initialization File
+
+
+
+* Testbench
+
+
+
+* Waveform
+
+
+
+### 3.2 ID Stage
+
+#### 3.2.1 RegFIle
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module RF
+(
+    input clk,
+    input rst,
+    input wena,
+    input [63:0] wdata,
+    input [2:0] waddr,
+    input [2:0] r0addr,
+    input [2:0] r1addr,
+
+    output reg [63:0] r0data,
+    output reg [63:0] r1data
+);
+
+    reg [63:0] RF [7:0];
+	 
+	integer i;
+
+    always @(posedge clk) begin
+        if (rst == 1)
+        begin
+            for (i = 0; i < 8; i = i + 1) begin
+                RF[i] <= 64'b0;
+            end
+        end
+        else if (wena == 1)
+        begin
+            RF[waddr] <= wdata;
+        end
+    end
+
+    always @(*) begin
+        r0data = ((waddr == r0addr) && wena) ? RF[waddr] : RF[r0addr];
+        r1data = ((waddr == r1addr) && wena) ? RF[waddr] : RF[r1addr];
+    end
+
+
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   15:53:18 03/01/2025
+// Design Name:   RF
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/RF_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: RF
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module RF_tb;
+
+	// Inputs
+	reg clk;
+	reg rst;
+	reg wena;
+	reg [63:0] wdata;
+	reg [2:0] waddr;
+	reg [2:0] r0addr;
+	reg [2:0] r1addr;
+
+	// Outputs
+	wire [63:0] r0data;
+	wire [63:0] r1data;
+
+	// Instantiate the Unit Under Test (UUT)
+	RF uut (
+		.clk(clk), 
+		.rst(rst), 
+		.wena(wena), 
+		.wdata(wdata), 
+		.waddr(waddr), 
+		.r0addr(r0addr), 
+		.r1addr(r1addr), 
+		.r0data(r0data), 
+		.r1data(r1data)
+	);
+
+	always #50 clk = ~clk;
+
+	initial begin
+		// Initialize Inputs
+        clk = 1;
+		rst = 1;
+		wena = 0;
+		wdata = 0;
+		waddr = 0;
+		r0addr = 0;
+		r1addr = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+		rst = 0;
+        
+		// Add stimulus here
+        wena = 1;
+        waddr = 3'd1;
+        wdata = 64'd17;
+        r0addr = 3'b000;
+        r1addr = 3'b001;
+        #100;
+
+        wena = 1;
+        waddr = 3'd2;
+        wdata = 64'd85;
+        r0addr = 3'd1;
+        r1addr = 3'd1;
+        #100;
+
+        wena = 0;
+        waddr = 3'd2;
+        wdata = 64'd17;
+        r0addr = 3'd2;
+        r1addr = 3'd3;
+        #100;
+
+        wena = 1;
+        waddr = 3'd3;
+        wdata = 64'd17;
+        r0addr = 3'd0;
+        r1addr = 3'd2;
+        #100;
+
+        wena = 1;
+        waddr = 3'd4;
+        wdata = 64'd7;
+        r0addr = 3'd2;
+        r1addr = 3'd3;
+        #100;
+
+        wena = 1;
+        waddr = 3'd5;
+        wdata = 64'd14;
+        r0addr = 3'd4;
+        r1addr = 3'd3;
+        #100;
+
+        wena = 1;
+        waddr = 3'd6;
+        wdata = 64'd9;
+        r0addr = 3'd1;
+        r1addr = 3'd4;
+        #100;
+
+        wena = 1;
+        waddr = 3'd7;
+        wdata = 64'd31;
+        r0addr = 3'd5;
+        r1addr = 3'd6;
+        #100;
+
+        $stop;
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 155841](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 155841.png)
+
+#### 3.2.2 Control_Unit
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module Control_Unit
+(
+    input [5:0] OP_CODE,
+
+    output NOOP_ID,
+    output ADDI_ID,
+    output MOVI_ID,
+    output LW_ID,
+    output SW_ID,
+    output BEQ_ID,
+    output BGT_ID,
+    output BLT_ID,
+    output J_ID,
+
+    output [3:0] ALU_OP_ID,
+    output WME_ID,
+    output WRE_ID
+);
+
+    assign NOOP_ID = (OP_CODE == 6'd0) ? 1 : 0;
+    assign ADDI_ID = (OP_CODE == 6'd1) ? 1 : 0;
+    assign MOVI_ID = (OP_CODE == 6'd2) ? 1 : 0;
+    assign LW_ID = (OP_CODE == 6'd3) ? 1 : 0;
+    assign SW_ID = (OP_CODE == 6'd4) ? 1 : 0;
+    assign BEQ_ID = (OP_CODE == 6'd5) ? 1 : 0;
+    assign BGT_ID = (OP_CODE == 6'd6) ? 1 : 0;
+    assign BLT_ID = (OP_CODE == 6'd7) ? 1 : 0;
+    assign J_ID = (OP_CODE == 6'd8) ? 1 : 0;
+
+    assign ALU_OP_ID = ((OP_CODE == 6'd0) || (OP_CODE == 6'd1) || (OP_CODE == 6'd3) || (OP_CODE == 6'd4)) ? 4'd0 : 4'd1;
+    assign WME_ID = (OP_CODE == 6'd4) ? 1 : 0;
+    assign WRE_ID = ((OP_CODE == 6'd1) || (OP_CODE == 6'd2) || (OP_CODE == 6'd3)) ? 1 : 0;
+    
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   16:16:45 03/01/2025
+// Design Name:   Control_Unit
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/Control_Unit_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: Control_Unit
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module Control_Unit_tb;
+
+	// Inputs
+	reg [5:0] OP_CODE;
+
+	// Outputs
+	wire NOOP_ID;
+	wire ADDI_ID;
+	wire MOVI_ID;
+	wire LW_ID;
+	wire SW_ID;
+	wire BEQ_ID;
+	wire BGT_ID;
+	wire BLT_ID;
+	wire J_ID;
+	wire [3:0] ALU_OP_ID;
+	wire WME_ID;
+	wire WRE_ID;
+
+	// Instantiate the Unit Under Test (UUT)
+	Control_Unit uut (
+		.OP_CODE(OP_CODE), 
+		.NOOP_ID(NOOP_ID), 
+		.ADDI_ID(ADDI_ID), 
+		.MOVI_ID(MOVI_ID), 
+		.LW_ID(LW_ID), 
+		.SW_ID(SW_ID), 
+		.BEQ_ID(BEQ_ID), 
+		.BGT_ID(BGT_ID), 
+		.BLT_ID(BLT_ID), 
+		.J_ID(J_ID), 
+		.ALU_OP_ID(ALU_OP_ID), 
+		.WME_ID(WME_ID), 
+		.WRE_ID(WRE_ID)
+	);
+
+	initial begin
+		// Initialize Inputs
+		OP_CODE = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+		#100;
+		OP_CODE = 0;
+		
+		#100;
+		OP_CODE = 1;
+		
+		#100;
+		OP_CODE = 2;
+
+		#100;
+		OP_CODE = 3;
+
+		#100;
+		OP_CODE = 4;
+
+		#100;
+		OP_CODE = 5;
+
+		#100;
+		OP_CODE = 6;
+
+		#100;
+		OP_CODE = 7;
+
+		#100;
+		OP_CODE = 8;
+
+		#100;
+		$stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 162105](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 162105.png)
+
+#### 3.2.3 Branch_Detection_Unit
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module Branch_Detection_Unit
+(
+    input [63:0] rs_data,
+    input [63:0] rt_data,
+
+    input BEQ_ID,
+    input BGT_ID,
+    input BLT_ID,
+
+    output PC_ctrl
+);
+
+    assign PC_ctrl =
+        ((BEQ_ID == 1) && (rt_data == rs_data)) ||
+        ((BGT_ID == 1) && (rt_data > rs_data)) ||
+        ((BLT_ID == 1) && (rt_data < rs_data))
+        ? 1 : 0;
+
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   16:29:58 03/01/2025
+// Design Name:   Branch_Detection_Unit
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/Branch_Detection_Unit_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: Branch_Detection_Unit
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module Branch_Detection_Unit_tb;
+
+	// Inputs
+	reg [63:0] rs_data;
+	reg [63:0] rt_data;
+	reg BEQ_ID;
+	reg BGT_ID;
+	reg BLT_ID;
+
+	// Outputs
+	wire PC_ctrl;
+
+	// Instantiate the Unit Under Test (UUT)
+	Branch_Detection_Unit uut (
+		.rs_data(rs_data), 
+		.rt_data(rt_data), 
+		.BEQ_ID(BEQ_ID), 
+		.BGT_ID(BGT_ID), 
+		.BLT_ID(BLT_ID), 
+		.PC_ctrl(PC_ctrl)
+	);
+
+	initial begin
+		// Initialize Inputs
+		rs_data = 0;
+		rt_data = 0;
+		BEQ_ID = 0;
+		BGT_ID = 0;
+		BLT_ID = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd0;
+		BEQ_ID = 1;
+		BGT_ID = 0;
+		BLT_ID = 0;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd1;
+		BEQ_ID = 1;
+		BGT_ID = 0;
+		BLT_ID = 0;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd2;
+		BEQ_ID = 1;
+		BGT_ID = 0;
+		BLT_ID = 0;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd0;
+		BEQ_ID = 0;
+		BGT_ID = 1;
+		BLT_ID = 0;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd1;
+		BEQ_ID = 0;
+		BGT_ID = 1;
+		BLT_ID = 0;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd2;
+		BEQ_ID = 0;
+		BGT_ID = 1;
+		BLT_ID = 0;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd0;
+		BEQ_ID = 0;
+		BGT_ID = 0;
+		BLT_ID = 1;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd1;
+		BEQ_ID = 0;
+		BGT_ID = 0;
+		BLT_ID = 1;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd2;
+		BEQ_ID = 0;
+		BGT_ID = 0;
+		BLT_ID = 1;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd0;
+		BEQ_ID = 0;
+		BGT_ID = 0;
+		BLT_ID = 0;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd1;
+		BEQ_ID = 0;
+		BGT_ID = 0;
+		BLT_ID = 0;
+
+		#100;
+		rt_data = 64'd1;
+		rs_data = 64'd2;
+		BEQ_ID = 0;
+		BGT_ID = 0;
+		BLT_ID = 0;
+
+		#100;
+		$stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 163640](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 163640.png)
+
+#### 3.2.4 Offset_Extend
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module Offset_Extend
+(
+    input [15:0] Offset,
+
+    output [31:0] Offset_ID
+);
+
+    assign Offset_ID[15:0] = Offset;
+    assign Offset_ID[31:16] = 16'b0;
+
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   16:40:50 03/01/2025
+// Design Name:   Offset_Extend
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/Offset_Extend_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: Offset_Extend
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module Offset_Extend_tb;
+
+	// Inputs
+	reg [15:0] Offset;
+
+	// Outputs
+	wire [31:0] Offset_ID;
+
+	// Instantiate the Unit Under Test (UUT)
+	Offset_Extend uut (
+		.Offset(Offset), 
+		.Offset_ID(Offset_ID)
+	);
+
+	initial begin
+		// Initialize Inputs
+		Offset = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+		#100;
+		Offset = 16'd0;
+
+		#100;
+		Offset = 16'd1;
+
+		#100;
+		Offset = 16'd2;
+
+		#100;
+		Offset = 16'd3;
+
+		#100;
+		$stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 164227](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 164227.png)
+
+### 3.3 EX Stage
+
+#### 3.3.1 ALU
+
+* OP_CODE lookup table
+
+| aluctrl |     Operation      |  A   |  B   | Expected Output |
+| :-----: | :----------------: | :--: | :--: | :-------------: |
+| 4'b0000 |        ADD         |  1   |  3   |        4        |
+| 4'b0001 |        SUB         |  4   |  2   |        2        |
+| 4'b0010 |        AND         |  5   |  7   |        5        |
+| 4'b0011 |         OR         |  8   |  3   |       11        |
+| 4'b0100 |        XNOR        |  13  |  3   |       -15       |
+| 4'b0101 |      Compare       |  5   |  5   |        1        |
+| 4'b0110 |     Left Shift     |  4   |  2   |       16        |
+| 4'b0111 |    Right Shift     | 256  |  4   |       16        |
+| 4'b1000 | Substring Compare  |  15  |  3   |        1        |
+| 4'b1001 | Shift-then-Compare |  15  |  3   |        0        |
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module ALU (
+    input  [63:0] A,
+    input  [63:0] B,
+    input  [3:0]  ALU_OP,
+    output reg [63:0] ALU_Out,
+    output reg Zero_Flag,
+    output reg Overflow
+);
+    
+    always @(*) begin
+        case (ALU_OP)
+            4'b0000: begin // Addition
+                {Overflow, ALU_Out} = A + B;
+            end
+            4'b0001: begin // Subtraction
+                {Overflow, ALU_Out} = A - B;
+            end
+            4'b0010: ALU_Out = A & B;              // Bitwise AND
+            4'b0011: ALU_Out = A | B;              // Bitwise OR
+            4'b0100: ALU_Out = A ^~ B;             // Bitwise XNOR
+            4'b0101: ALU_Out = (A == B) ? 64'b1 : 64'b0; // Compare (Equality)
+            4'b0110: ALU_Out = A << B[5:0];        // Logical Left Shift
+            4'b0111: ALU_Out = A >> B[5:0];        // Logical Right Shift
+            4'b1000: ALU_Out = substring_match(A, B); // Substring Compare
+            4'b1001: ALU_Out = shift_then_compare(A, B); // Shift-then-Compare
+            default: ALU_Out = 64'b0;
+        endcase
+        
+        // Zero Flag
+        Zero_Flag = (ALU_Out == 64'b0) ? 1'b1 : 1'b0;
+        
+    end
+    
+    // Function to check if B is a substring of A
+    function [63:0] substring_match;
+        input [63:0] A, B;
+        integer i;
+        begin
+            substring_match = 64'b0;
+            for (i = 0; i < 64; i = i + 1) begin
+                if ((A >> i) & B == B) begin
+                    substring_match = 64'b1;
+                end
+            end
+        end
+    endfunction
+    
+    // Function to shift A and then compare with B
+    function [63:0] shift_then_compare;
+        input [63:0] A, B;
+        integer i;
+        begin
+            shift_then_compare = 64'b0;
+            for (i = 0; i < 64; i = i + 1) begin
+                if ((A >> i) == B) begin
+                    shift_then_compare = 64'b1;
+                end
+            end
+        end
+    endfunction
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   16:44:30 03/01/2025
+// Design Name:   ALU
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/ALU_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: ALU
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module ALU_tb;
+
+	// Inputs
+	reg [63:0] A;
+	reg [63:0] B;
+	reg [3:0] ALU_OP;
+
+	// Outputs
+	wire [63:0] ALU_Out;
+	wire Zero_Flag;
+	wire Overflow;
+
+	// Instantiate the Unit Under Test (UUT)
+	ALU uut (
+		.A(A), 
+		.B(B), 
+		.ALU_OP(ALU_OP), 
+		.ALU_Out(ALU_Out), 
+		.Zero_Flag(Zero_Flag), 
+		.Overflow(Overflow)
+	);
+
+	initial begin
+		// Initialize Inputs
+		A = 0;
+		B = 0;
+		ALU_OP = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+		A = 64'd1;
+		B = 64'd3;
+		ALU_OP = 4'b0000;
+		#100;
+		
+		A = 64'd4;
+		B = 64'd2;
+		ALU_OP = 4'b0001;
+		#100;
+		
+		A = 64'd5;
+		B = 64'd7;
+		ALU_OP = 4'b0010;
+		#100;
+
+		A = 64'd8;
+		B = 64'd3;
+		ALU_OP = 4'b0011;
+		#100;
+
+		A = 64'd13;
+		B = 64'd3;
+		ALU_OP = 4'b0100;
+		#100;
+
+		A = 64'd5;
+		B = 64'd5;
+		ALU_OP = 4'b0101;
+		#100;
+
+		A = 64'd4;
+		B = 64'd2;
+		ALU_OP = 4'b0110;
+		#100;
+
+		A = 64'd256;
+		B = 64'd4;
+		ALU_OP = 4'b0111;
+		#100;
+
+		A = 64'd15;
+		B = 64'd3;
+		ALU_OP = 4'b1000;
+		#100;
+
+		A = 64'd15;
+		B = 64'd5;
+		ALU_OP = 4'b1001;
+		#100;
+
+		$stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 164641](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 164641.png)
+
+#### 3.3.2 ALU_src_MUX
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module ALU_src_MUX
+(
+    input [63:0] rt_data,
+    input [63:0] Offset_EX,
+    input ADDI_EX,
+    input LW_EX,
+    input SW_EX,
+
+    output [63:0] ALU_B
+);
+
+    wire ALU_src_ctrl;
+
+    assign ALU_src_ctrl = ADDI_EX || LW_EX || SW_EX;
+
+    assign ALU_B = (ALU_src_ctrl == 1) ? Offset_EX : rt_data;
+
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   16:58:15 03/01/2025
+// Design Name:   ALU_src_MUX
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/ALU_src_MUX_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: ALU_src_MUX
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module ALU_src_MUX_tb;
+
+	// Inputs
+	reg [63:0] rt_data;
+	reg [63:0] Offset_EX;
+	reg ADDI_EX;
+	reg LW_EX;
+	reg SW_EX;
+
+	// Outputs
+	wire [63:0] ALU_B;
+
+	// Instantiate the Unit Under Test (UUT)
+	ALU_src_MUX uut (
+		.rt_data(rt_data), 
+		.Offset_EX(Offset_EX), 
+		.ADDI_EX(ADDI_EX), 
+		.LW_EX(LW_EX), 
+		.SW_EX(SW_EX), 
+		.ALU_B(ALU_B)
+	);
+
+	initial begin
+		// Initialize Inputs
+		rt_data = 0;
+		Offset_EX = 0;
+		ADDI_EX = 0;
+		LW_EX = 0;
+		SW_EX = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+		#100;
+		rt_data = 64'd1;
+		Offset_EX = 64'd2;
+		ADDI_EX = 0;
+		LW_EX = 0;
+		SW_EX = 0;
+
+		#100;
+		rt_data = 64'd1;
+		Offset_EX = 64'd2;
+		ADDI_EX = 1;
+		LW_EX = 0;
+		SW_EX = 0;
+
+		#100;
+		rt_data = 64'd1;
+		Offset_EX = 64'd2;
+		ADDI_EX = 0;
+		LW_EX = 1;
+		SW_EX = 0;
+
+		#100;
+		rt_data = 64'd1;
+		Offset_EX = 64'd2;
+		ADDI_EX = 0;
+		LW_EX = 0;
+		SW_EX = 1;
+
+		#100;
+		$stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 170041](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 170041.png)
+
+### 3.4 MEM Stage
+
+#### 3.4.1 D_MEM
+
+* Verilog
+
+
+
+* Vector File
+
+
+
+* Memory Initialization File
+
+
+
+* Testbench
+
+
+
+* Waveform
+
+
+
+#### 3.4.2 D_addr_src_MUX
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module D_addr_src_MUX
+(
+    input [63:0] ALU_result_M,
+    input [63:0] rt_M,
+    input SW_M,
+
+    output [7:0] D_addr
+);
+
+    assign D_addr = (SW_M == 1) ? ALU_result_M[7:0] : rt_M[7:0];
+
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   17:09:35 03/01/2025
+// Design Name:   D_addr_src_MUX
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/D_addr_src_MUX_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: D_addr_src_MUX
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module D_addr_src_MUX_tb;
+
+	// Inputs
+	reg [63:0] ALU_result_M;
+	reg [63:0] rt_M;
+	reg SW_M;
+
+	// Outputs
+	wire [7:0] D_addr;
+
+	// Instantiate the Unit Under Test (UUT)
+	D_addr_src_MUX uut (
+		.ALU_result_M(ALU_result_M), 
+		.rt_M(rt_M), 
+		.SW_M(SW_M), 
+		.D_addr(D_addr)
+	);
+
+	initial begin
+		// Initialize Inputs
+		ALU_result_M = 0;
+		rt_M = 0;
+		SW_M = 0;
+
+		// Wait 100 ns for global reset to finish
+		#100;
+        
+		// Add stimulus here
+		#100;
+		ALU_result_M = 64'd1;
+		rt_M = 64'd2;
+		SW_M = 0;
+
+		#100;
+		ALU_result_M = 64'd3;
+		rt_M = 64'd4;
+		SW_M = 1;
+
+		#100;
+		$stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 171147](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 171147.png)
+
+### 3.5 WB Stage
+
+#### 3.5.1 RF_WB_data_src_MUX
+
+* Verilog
+
+```verilog
+`timescale 1ns / 1ps
+
+module RF_WB_data_src_MUX
+(
+    input [63:0] D_out_WB,
+    input [63:0] ALU_out_WB,
+    input [63:0] Offset_WB,
+
+    input LW_WB,
+    input ADDI_WB,
+    input MOVI_WB,
+
+    output [63:0] RF_WB_Din
+);
+
+    wire [63:0] temp;
+
+    assign temp = (~LW_WB && ADDI_WB) ? ALU_out_WB : D_out_WB;
+    assign RF_WB_Din = (MOVI_WB && ~LW_WB && ~ADDI_WB) ? Offset_WB : temp;
+
+endmodule
+```
+
+* Testbench
+
+```verilog
+`timescale 1ns / 1ps
+
+////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer:
+//
+// Create Date:   17:24:15 03/01/2025
+// Design Name:   RF_WB_data_src_MUX
+// Module Name:   E:/Documents and Settings/student/EE533_Lab7/RF_WB_data_src_MUX_tb.v
+// Project Name:  EE533_Lab7
+// Target Device:  
+// Tool versions:  
+// Description: 
+//
+// Verilog Test Fixture created by ISE for module: RF_WB_data_src_MUX
+//
+// Dependencies:
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+////////////////////////////////////////////////////////////////////////////////
+
+module RF_WB_data_src_MUX_tb;
+
+	// Inputs
+	reg [63:0] D_out_WB;
+	reg [63:0] ALU_out_WB;
+	reg [63:0] Offset_WB;
+	reg LW_WB;
+	reg ADDI_WB;
+	reg MOVI_WB;
+
+	// Outputs
+	wire [63:0] RF_WB_Din;
+
+	// Instantiate the Unit Under Test (UUT)
+	RF_WB_data_src_MUX uut (
+		.D_out_WB(D_out_WB), 
+		.ALU_out_WB(ALU_out_WB), 
+		.Offset_WB(Offset_WB), 
+		.LW_WB(LW_WB), 
+		.ADDI_WB(ADDI_WB), 
+		.MOVI_WB(MOVI_WB), 
+		.RF_WB_Din(RF_WB_Din)
+	);
+
+	initial begin
+		// Initialize Inputs
+		D_out_WB = 0;
+		ALU_out_WB = 0;
+		Offset_WB = 0;
+		LW_WB = 0;
+		ADDI_WB = 0;
+		MOVI_WB = 0;
+
+		// Wait 100 ns for global reset to finish
+        #100;
+
+		// Add stimulus here
+		#100;
+		D_out_WB = 64'd1;
+		ALU_out_WB = 64'd2;
+		Offset_WB = 64'd3;
+		LW_WB = 0;
+		ADDI_WB = 0;
+		MOVI_WB = 0;
+
+		#100;
+		D_out_WB = 64'd1;
+		ALU_out_WB = 64'd2;
+		Offset_WB = 64'd3;
+		LW_WB = 1;
+		ADDI_WB = 0;
+		MOVI_WB = 0;
+
+		#100;
+		D_out_WB = 64'd1;
+		ALU_out_WB = 64'd2;
+		Offset_WB = 64'd3;
+		LW_WB = 0;
+		ADDI_WB = 1;
+		MOVI_WB = 0;
+
+		#100;
+		D_out_WB = 64'd1;
+		ALU_out_WB = 64'd2;
+		Offset_WB = 64'd3;
+		LW_WB = 0;
+		ADDI_WB = 0;
+		MOVI_WB = 1;
+
+		#100;
+		D_out_WB = 64'd1;
+		ALU_out_WB = 64'd2;
+		Offset_WB = 64'd3;
+		LW_WB = 0;
+		ADDI_WB = 0;
+		MOVI_WB = 0;
+
+		#100;
+		$stop;
+
+	end
+      
+endmodule
+```
+
+* Waveform
+
+![屏幕截图 2025-03-01 174420](C:\Users\StepF\Documents\GitHub\ee533\lab 7\Pic\屏幕截图 2025-03-01 174420.png)
+
+### 3.6 Stage Reg
+
+#### 3.6.1 IF_ID_Reg
+
+* Verilog
+
+
+
+* Testbench
+
+
+
+* Waveform
+
+
+
+#### 3.6.2 ID_EX_Reg
+
+* Verilog
+
+
+
+* Testbench
+
+
+
+* Waveform
+
+
+
+#### 3.6.3 EX_M_Reg
+
+* Verilog
+
+
+
+* Testbench
+
+
+
+* Waveform
+
+
+
+#### 3.6.4 M_WB_Reg
+
+* Verilog
+
+
+
+* Testbench
+
+
+
+* Waveform
+
