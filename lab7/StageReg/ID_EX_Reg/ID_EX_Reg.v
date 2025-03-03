@@ -11,6 +11,7 @@ module ID_EX_Reg
     input MOVI_ID,
     input LW_ID,
     input SW_ID,
+    input SUBI_ID,
 
     input WME_ID,
     input WRE_ID,
@@ -25,6 +26,7 @@ module ID_EX_Reg
     output reg MOVI_EX,
     output reg LW_EX,
     output reg SW_EX,
+    output reg SUBI_EX,
     
     output reg WME_EX,
     output reg WRE_EX,
@@ -42,6 +44,7 @@ module ID_EX_Reg
             MOVI_EX <= 0;
             LW_EX <= 0;
             SW_EX <= 0;
+            SUBI_EX <= 0;
             WME_EX <= 0;
             WRE_EX <= 0;
             rs_data_EX <= 0;
@@ -56,6 +59,7 @@ module ID_EX_Reg
             MOVI_EX <= MOVI_ID;
             LW_EX <= LW_ID;
             SW_EX <= SW_ID;
+            SUBI_EX <= SUBI_ID;
             WME_EX <= WME_ID;
             WRE_EX <= WRE_ID;
             rs_data_EX <= rs_data_ID;

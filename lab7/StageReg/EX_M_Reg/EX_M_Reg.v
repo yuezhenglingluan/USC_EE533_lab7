@@ -10,6 +10,7 @@ module EX_M_Reg
     input MOVI_EX,
     input LW_EX,
     input SW_EX,
+    input SUBI_EX,
 
     input WME_EX,
     input WRE_EX,
@@ -24,6 +25,7 @@ module EX_M_Reg
     output reg MOVI_M,
     output reg LW_M,
     output reg SW_M,
+    output reg SUBI_M,
 
     output reg WME_M,
     output reg WRE_M,
@@ -41,6 +43,7 @@ module EX_M_Reg
             MOVI_M <= 0;
             LW_M <= 0;
             SW_M <= 0;
+            SUBI_M <= 0;
 
             WME_M <= 0;
             WRE_M <= 0;
@@ -56,6 +59,7 @@ module EX_M_Reg
             MOVI_M <= MOVI_EX;
             LW_M <= LW_EX;
             SW_M <= SW_EX;
+            SUBI_M <= SUBI_EX;
 
             WME_M <= WME_EX;
             WRE_M <= WRE_EX;

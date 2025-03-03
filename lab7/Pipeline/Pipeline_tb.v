@@ -4,7 +4,7 @@
 // Company: 
 // Engineer:
 //
-// Create Date:   23:28:48 03/01/2025
+// Create Date:   14:19:56 03/02/2025
 // Design Name:   Pipeline
 // Module Name:   E:/Documents and Settings/student/EE533_Lab7/EE533_Lab_7/Pipeline_tb.v
 // Project Name:  EE533_Lab_7
@@ -29,6 +29,7 @@ module Pipeline_tb;
 	reg [31:0] Instr_IN;
 	reg Instr_W_en;
 	reg [8:0] I_W_Addr;
+	reg [63:0] ONE;
 	reg rst;
 
 	// Outputs
@@ -102,6 +103,7 @@ module Pipeline_tb;
 		.Instr_IN(Instr_IN), 
 		.Instr_W_en(Instr_W_en), 
 		.I_W_Addr(I_W_Addr), 
+		.ONE(ONE), 
 		.rst(rst), 
 		.ADDI_EX(ADDI_EX), 
 		.ADDI_ID(ADDI_ID), 
@@ -172,17 +174,863 @@ module Pipeline_tb;
 
 	initial begin
 		// Initialize Inputs
-		clk = 0;
+		clk = 1;
 		Instr_IN = 0;
 		Instr_W_en = 0;
 		I_W_Addr = 0;
+		ONE = 0;
 		rst = 1;
 
 		// Wait 100 ns for global reset to finish
 		@(posedge clk);
+		ONE = 64'd1;
 		rst = 0;
         
 		// Add stimulus here
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
+		@(posedge clk);
+
 		@(posedge clk);
 
 		@(posedge clk);

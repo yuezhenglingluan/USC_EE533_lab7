@@ -13,6 +13,7 @@ module Control_Unit
     output BGT_ID,
     output BLT_ID,
     output J_ID,
+    output SUBI_ID,
 
     output [3:0] ALU_OP_ID,
     output WME_ID,
@@ -28,9 +29,10 @@ module Control_Unit
     assign BGT_ID = (OP_CODE == 6'd6) ? 1 : 0;
     assign BLT_ID = (OP_CODE == 6'd7) ? 1 : 0;
     assign J_ID = (OP_CODE == 6'd8) ? 1 : 0;
+    assign SUBI_ID = (OP_CODE == 6'd9) ? 1 : 0;
 
     assign ALU_OP_ID = ((OP_CODE == 6'd0) || (OP_CODE == 6'd1) || (OP_CODE == 6'd3) || (OP_CODE == 6'd4)) ? 4'd0 : 4'd1;
     assign WME_ID = (OP_CODE == 6'd4) ? 1 : 0;
-    assign WRE_ID = ((OP_CODE == 6'd1) || (OP_CODE == 6'd2) || (OP_CODE == 6'd3)) ? 1 : 0;
+    assign WRE_ID = ((OP_CODE == 6'd1) || (OP_CODE == 6'd2) || (OP_CODE == 6'd3) || (OP_CODE == 6'd9)) ? 1 : 0;
     
 endmodule

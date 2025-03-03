@@ -10,11 +10,11 @@ module RF
     input [2:0] r0addr,
     input [2:0] r1addr,
 
-    output reg [63:0] r0data,
-    output reg [63:0] r1data
+    output reg signed [63:0] r0data,
+    output reg signed [63:0] r1data
 );
 
-    reg [63:0] RF [7:0];
+    reg signed [63:0] RF [7:0];
 	 
 	integer i;
 

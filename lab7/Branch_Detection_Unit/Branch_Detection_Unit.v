@@ -15,8 +15,8 @@ module Branch_Detection_Unit
 
     assign PC_ctrl =
         ((BEQ_ID == 1) && (rt_data == rs_data)) ||
-        ((BGT_ID == 1) && (rt_data > rs_data)) ||
-        ((BLT_ID == 1) && (rt_data < rs_data)) ||
+        ((BGT_ID == 1) && ($signed(rt_data) > $signed(rs_data))) ||
+        ((BLT_ID == 1) && ($signed(rt_data) < $signed(rs_data))) ||
         (J_ID == 1)
         ? 1 : 0;
 

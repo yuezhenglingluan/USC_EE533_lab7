@@ -35,6 +35,7 @@ module M_WB_Reg_tb;
 	reg WRE_M;
 	reg [63:0] D_out_M;
 	reg [63:0] rs_data_M;
+	reg [63:0] rt_data_M;
 	reg [63:0] ALU_result_M;
 	reg [63:0] Offset_M;
 	reg [4:0] rt_M;
@@ -48,6 +49,7 @@ module M_WB_Reg_tb;
 	wire WRE_WB;
 	wire [63:0] D_out_WB;
 	wire [63:0] rs_data_WB;
+	wire [63:0] rt_data_WB;
 	wire [63:0] ALU_result_WB;
 	wire [63:0] Offset_WB;
 	wire [2:0] rt_WB;
@@ -64,6 +66,7 @@ module M_WB_Reg_tb;
 		.WRE_M(WRE_M), 
 		.D_out_M(D_out_M), 
 		.rs_data_M(rs_data_M), 
+		.rt_data_M(rt_data_M),
 		.ALU_result_M(ALU_result_M), 
 		.Offset_M(Offset_M), 
 		.rt_M(rt_M), 
@@ -75,6 +78,7 @@ module M_WB_Reg_tb;
 		.WRE_WB(WRE_WB), 
 		.D_out_WB(D_out_WB), 
 		.rs_data_WB(rs_data_WB), 
+		.rt_data_WB(rt_data_WB),
 		.ALU_result_WB(ALU_result_WB), 
 		.Offset_WB(Offset_WB), 
 		.rt_WB(rt_WB)
@@ -94,6 +98,7 @@ module M_WB_Reg_tb;
 		WRE_M = 0;
 		D_out_M = 0;
 		rs_data_M = 0;
+		rt_data_M = 0;
 		ALU_result_M = 0;
 		Offset_M = 0;
 		rt_M = 0;
@@ -112,6 +117,7 @@ module M_WB_Reg_tb;
 		WRE_M = 1;
 		D_out_M = 64'd123;
 		rs_data_M = 64'd0;
+		rt_data_M = 64'd0;
 		ALU_result_M = 0;
 		Offset_M = 64'd9;
 		rt_M = 5'd1;
@@ -125,6 +131,7 @@ module M_WB_Reg_tb;
 		WRE_M = 0;
 		D_out_M = 64'd323;
 		rs_data_M = 64'd0;
+		rt_data_M = 64'd0;
 		ALU_result_M = 0;
 		Offset_M = 64'd0;
 		rt_M = 5'd0;
@@ -138,6 +145,7 @@ module M_WB_Reg_tb;
 		WRE_M = 0;
 		D_out_M = 64'd323;
 		rs_data_M = 64'd0;
+		rt_data_M = 64'd0;
 		ALU_result_M = 0;
 		Offset_M = 64'd0;
 		rt_M = 5'd0;
@@ -151,6 +159,7 @@ module M_WB_Reg_tb;
 		WRE_M = 0;
 		D_out_M = 64'd323;
 		rs_data_M = 64'd0;
+		rt_data_M = 64'd0;
 		ALU_result_M = 0;
 		Offset_M = 64'd0;
 		rt_M = 5'd0;
@@ -164,6 +173,7 @@ module M_WB_Reg_tb;
 		WRE_M = 0;
 		D_out_M = 64'd323;
 		rs_data_M = 64'd0;
+		rt_data_M = 64'd0;
 		ALU_result_M = 0;
 		Offset_M = 64'd0;
 		rt_M = 5'd0;
@@ -177,6 +187,7 @@ module M_WB_Reg_tb;
 		WRE_M = 1;
 		D_out_M = 64'd2;
 		rs_data_M = 64'd0;
+		rt_data_M = 64'd0;
 		ALU_result_M = 64'd1;
 		Offset_M = 64'd1;
 		rt_M = 5'd3;
